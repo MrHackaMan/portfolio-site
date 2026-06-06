@@ -5,244 +5,207 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aidan Hack | Cybersecurity Systems</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Mono:wght@400;700&family=Bebas+Neue&family=Syne:wght@400;700;800;900&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
 <style>
 :root{
-  --bg:#07080f;
-  --surface:#0e0f18;
-  --surface2:#12131c;
-  --amber:#f5a623;
-  --pink:#ff2d6e;
-  --text:#e8e4dd;
-  --muted:#4a4a62;
-  --border:rgba(245,166,35,0.13);
-  --fp:'Press Start 2P',monospace;
-  --fm:'Space Mono',monospace;
-  --fb:'Bebas Neue',sans-serif;
-  --fd:'Syne',sans-serif;
+  --bg:#07080f;--surface:#0e0f18;--s2:#12131c;
+  --amber:#f5a623;--pink:#ff2d6e;--cyan:#00e5ff;
+  --text:#e8e4dd;--muted:#4a4a62;--border:rgba(245,166,35,0.12);
+  --fp:'Press Start 2P',monospace;--fm:'Space Mono',monospace;
+  --fb:'Bebas Neue',sans-serif;--fd:'Syne',sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:var(--fd);background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh;cursor:crosshair;transition:background 1.4s ease}
+body{font-family:var(--fd);background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh;cursor:crosshair;transition:background 1.8s ease}
 
-/* ─── LOADER ─── */
-#loader{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
-#loader.out{animation:fadeOut 0.5s ease forwards;pointer-events:none}
+/* ── LOADER ── */
+#loader{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+#loader.out{animation:fadeOut .5s ease forwards;pointer-events:none}
 @keyframes fadeOut{to{opacity:0}}
-.ld-name{font-family:var(--fb);font-size:52px;color:var(--amber);letter-spacing:4px;line-height:0.88;text-align:center}
-.ld-sub{font-family:var(--fm);font-size:7px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:4px}
+.ld-name{font-family:var(--fb);font-size:48px;color:var(--amber);letter-spacing:5px;line-height:.88;text-align:center}
+.ld-sub{font-family:var(--fm);font-size:7px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
 .ld-msg{font-family:var(--fm);font-size:8px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;min-height:13px;text-align:center}
 .ld-bar{width:180px;height:7px;border:1px solid var(--amber);padding:1px;background:rgba(245,166,35,0.05)}
-.ld-fill{height:100%;width:0%;background:var(--amber);box-shadow:0 0 6px var(--amber);transition:width 0.07s linear}
+.ld-fill{height:100%;width:0%;background:var(--amber);box-shadow:0 0 6px var(--amber);transition:width .07s linear}
 .ld-pct{font-family:var(--fp);font-size:7px;color:var(--amber)}
-.ld-lines{font-family:var(--fm);font-size:7px;width:180px;text-align:left;line-height:2}
+.ld-lines{font-family:var(--fm);font-size:7px;width:180px;text-align:left;line-height:1.9}
 
-/* ─── GRID ─── */
-#grid{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0.03;
-  background-image:linear-gradient(rgba(245,166,35,1) 1px,transparent 1px),
-                   linear-gradient(90deg,rgba(245,166,35,1) 1px,transparent 1px);
-  background-size:52px 52px;transition:opacity 1.8s ease}
-#grid.glow{opacity:0.09}
+/* ── GRID BG ── */
+#grid{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.028;
+  background-image:linear-gradient(rgba(245,166,35,1) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,1) 1px,transparent 1px);
+  background-size:52px 52px;transition:opacity 2s ease}
 
-/* ─── HUD CORNERS ─── */
+/* ── HUD CORNERS ── */
 .hud{position:fixed;z-index:3;pointer-events:none;width:36px;height:36px}
 .hud svg{width:100%;height:100%}
 .htl{top:10px;left:10px}.htr{top:10px;right:10px;transform:scaleX(-1)}
 .hbl{bottom:10px;left:10px;transform:scaleY(-1)}.hbr{bottom:10px;right:10px;transform:scale(-1)}
 
-/* ─── STATUS ─── */
+/* ── STATUS ── */
 #status{position:fixed;top:20px;right:22px;z-index:1000;font-family:var(--fm);font-size:7px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;gap:8px}
-.sdot{width:5px;height:5px;border-radius:50%;background:#22223a;animation:pulse 2s ease infinite}
+.sdot{width:5px;height:5px;border-radius:50%;background:#1a1a2e;animation:pulse 2.4s ease infinite}
 .sdot.on{background:var(--amber);box-shadow:0 0 6px var(--amber)}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
 #slit{color:var(--amber)}
 
-/* ─── HINT ─── */
-#hint{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:1000;font-family:var(--fm);font-size:7px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;pointer-events:none;transition:opacity 1s ease;white-space:nowrap;text-align:center}
-#hint em{color:var(--amber);font-style:normal}
-#hint.gone{opacity:0}
-
-/* ─── NAV ─── */
+/* ── NAV ── */
 #nav{position:fixed;top:18px;left:18px;z-index:1000}
 .npill{background:transparent;color:var(--amber);font-family:var(--fp);font-size:6px;padding:6px 12px;border:1px solid var(--amber);cursor:pointer;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;gap:5px;transition:background .15s}
-.npill:hover{background:rgba(245,166,35,0.08)}
+.npill:hover{background:rgba(245,166,35,.08)}
 .nblink{width:5px;height:5px;background:var(--amber);display:inline-block;animation:blink 1s step-end infinite}
 @keyframes blink{50%{opacity:0}}
-.nmenu{position:absolute;top:34px;left:0;background:var(--surface);border:1px solid var(--amber);min-width:160px;opacity:0;pointer-events:none;transform:translateY(-6px);transition:all .2s cubic-bezier(.175,.885,.32,1.275);box-shadow:0 0 24px rgba(245,166,35,0.08),4px 4px 0 rgba(245,166,35,0.15)}
+.nmenu{position:absolute;top:34px;left:0;background:var(--surface);border:1px solid var(--amber);min-width:160px;opacity:0;pointer-events:none;transform:translateY(-6px);transition:all .2s cubic-bezier(.175,.885,.32,1.275);box-shadow:0 0 24px rgba(245,166,35,.08),4px 4px 0 rgba(245,166,35,.14)}
 .nmenu.open{opacity:1;pointer-events:auto;transform:translateY(0)}
-.nitem{display:flex;align-items:center;gap:8px;padding:8px 12px;font-family:var(--fp);font-size:6px;color:var(--muted);cursor:pointer;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid rgba(245,166,35,0.06);transition:color .12s,background .12s}
+.nitem{display:flex;align-items:center;gap:8px;padding:8px 12px;font-family:var(--fp);font-size:6px;color:var(--muted);cursor:pointer;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid rgba(245,166,35,.06);transition:color .12s,background .12s}
 .nitem:last-child{border-bottom:none}
-.nitem:hover{color:var(--amber);background:rgba(245,166,35,0.04)}
-.nnum{color:rgba(245,166,35,0.28)}
+.nitem:hover{color:var(--amber);background:rgba(245,166,35,.04)}
+.nnum{color:rgba(245,166,35,.28)}
 
-/* ─── PAGES ─── */
+/* ── PAGES ── */
 .page{display:none;min-height:100vh;position:relative}
 .page.active{display:block}
-#pbg{position:fixed;inset:0;z-index:0;pointer-events:auto}
-.cl{position:relative;z-index:4;pointer-events:none}
-.cl a,.cl button,.cl .fbtn,.cl .nchar,.cl .pcard,.cl .spill,.cl .clink,#nav,#snoopy-stage{pointer-events:auto}
 
-/* ─── HOME ─── */
-.home-inner{padding:80px 32px 60px;max-width:760px;margin:0 auto;text-align:center}
-.sys-top{font-family:var(--fm);font-size:7px;color:var(--amber);letter-spacing:3px;text-transform:uppercase;margin-bottom:4px;opacity:0.75}
-.sys-sub{font-family:var(--fm);font-size:6px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:36px;line-height:2}
-.sys-sub b{color:rgba(245,166,35,0.6);font-weight:400}
+/* ── CANVAS LAYERS (stacked, fixed) ── */
+#c-lights{position:fixed;inset:0;z-index:2;pointer-events:none}
+#c-shapes{position:fixed;inset:0;z-index:3;pointer-events:auto;cursor:crosshair}
 
-/* ─── BIG STACKED NAME ─── */
-/* Carlos uses ultra-condensed, stacked, with a slight 3D perspective skew */
-.name-block{display:flex;flex-direction:column;align-items:center;gap:0;margin-bottom:0;user-select:none;position:relative;z-index:2}
-.name-top{
-  font-family:var(--fb);
-  font-size:clamp(96px,18vw,220px);
-  line-height:0.82;
-  letter-spacing:8px;
-  color:var(--text);
-  text-transform:uppercase;
-  display:flex;gap:0;
-  transform:perspective(600px) rotateX(6deg);
+/* ── CONTENT ── */
+.cl{position:relative;z-index:10;pointer-events:none}
+.cl a,.cl button,.cl .fbtn,.cl .pcard,.cl .spill,.cl .clink,#nav,#snoopy-stage{pointer-events:auto}
+
+/* ── HOME ── */
+.home-inner{padding:80px 32px 60px;max-width:820px;margin:0 auto;text-align:center}
+.sys-top{font-family:var(--fm);font-size:7px;color:var(--amber);letter-spacing:3px;text-transform:uppercase;margin-bottom:40px;opacity:.7}
+
+/* ── STACKED NAME (Carlos-style) ── */
+/* AIDAN on top leans back (rotateX positive), HACK on bottom leans forward */
+.name-block{display:flex;flex-direction:column;align-items:center;user-select:none;position:relative;z-index:2;margin-bottom:10px;gap:0}
+.name-row{display:flex;justify-content:center;overflow:hidden;line-height:.85}
+.name-top-row{
+  transform:perspective(400px) rotateX(12deg) scaleY(1.1);
   transform-origin:bottom center;
+  margin-bottom:-2px;
 }
-.name-bot{
-  font-family:var(--fb);
-  font-size:clamp(96px,18vw,220px);
-  line-height:0.82;
-  letter-spacing:8px;
-  color:var(--amber);
-  text-transform:uppercase;
-  display:flex;gap:0;
-  transform:perspective(600px) rotateX(-3deg);
+.name-bot-row{
+  transform:perspective(400px) rotateX(-8deg) scaleY(1.1);
   transform-origin:top center;
-  margin-top:-4px;
 }
-/* individual chars for hover effect */
 .nchar{
+  font-family:var(--fb);
+  font-size:clamp(88px,17vw,210px);
+  line-height:.85;
+  letter-spacing:4px;
   display:inline-block;
   cursor:default;
-  transition:transform .16s cubic-bezier(.175,.885,.32,1.4),color .1s,text-shadow .1s;
+  /* start state for scramble reveal */
+  opacity:0;
+  transform:translateY(40px) skewX(-8deg);
+  transition:transform .25s cubic-bezier(.175,.885,.32,1.275),opacity .2s ease,color .12s,text-shadow .12s;
 }
-.name-top .nchar:hover{
-  color:var(--amber);
-  transform:translateY(-8px) scale(1.08);
-  text-shadow:0 0 24px rgba(245,166,35,0.5);
-}
-.name-bot .nchar:hover{
-  color:#fff;
-  transform:translateY(-8px) scale(1.08);
-  text-shadow:0 0 24px rgba(255,255,255,0.4);
-}
+.nchar.top{color:var(--text)}
+.nchar.bot{color:var(--amber)}
+.nchar.revealed{opacity:1;transform:translateY(0) skewX(0deg)}
+.nchar.top:hover{color:var(--amber);text-shadow:0 0 30px rgba(245,166,35,.6);transform:translateY(-8px) scale(1.05)}
+.nchar.bot:hover{color:#fff;text-shadow:0 0 30px rgba(255,255,255,.5);transform:translateY(-8px) scale(1.05)}
 
-/* folder section sits directly below name */
-.folder-zone{position:relative;margin-top:28px}
+/* thin amber rule between rows */
+.name-rule{width:70%;max-width:500px;height:1px;background:linear-gradient(90deg,transparent,var(--amber),transparent);margin:4px auto}
+
+/* ── FOLDERS ── */
+.folder-zone{margin-top:28px}
 .folder-hint{font-family:var(--fm);font-size:6px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:16px}
-
-/* ─── 3D PERSPECTIVE FOLDERS ─── */
-/* The Carlos folders have a visible left shadow face + top face = isometric lean */
 .folders-row{display:flex;justify-content:center;gap:52px;flex-wrap:wrap}
-.fbtn{
-  display:flex;flex-direction:column;align-items:center;gap:10px;
-  cursor:pointer;background:none;border:none;color:var(--text);
-  font-family:var(--fp);font-size:6px;text-transform:uppercase;letter-spacing:0.5px;
-  transition:transform .22s cubic-bezier(.175,.885,.32,1.275);
-}
+.fbtn{display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;background:none;border:none;color:var(--text);font-family:var(--fp);font-size:6px;text-transform:uppercase;letter-spacing:.5px;transition:transform .22s cubic-bezier(.175,.885,.32,1.275)}
 .fbtn:hover{transform:translateY(-10px) scale(1.1)}
 .fbtn:hover .flbl{color:var(--amber)}
-.ficon{width:80px;height:68px;position:relative;display:block}
+.ficon{width:80px;height:68px;display:block}
 .ficon svg{width:100%;height:100%;image-rendering:pixelated}
 .flbl{transition:color .15s;margin-top:2px}
 
-/* ─── SNOOPY STAGE (fullscreen overlay for pop-ups) ─── */
+/* ── SNOOPY STAGE ── */
 #snoopy-stage{position:fixed;inset:0;z-index:5;pointer-events:none;overflow:hidden}
-.snoopy-pop{position:absolute;pointer-events:auto;cursor:pointer}
-.snoopy-pop canvas{image-rendering:pixelated;display:block}
-.sbubble{
-  position:absolute;
-  background:#fff;
-  color:#111;
-  font-family:var(--fp);
-  font-size:6px;
-  padding:5px 9px;
-  white-space:nowrap;
-  line-height:1.7;
-  letter-spacing:0.5px;
-  opacity:0;
-  transition:opacity .25s;
-  pointer-events:none;
-  box-shadow:2px 2px 0 rgba(0,0,0,0.15);
-}
-.sbubble.vis{opacity:1}
-/* tail directions set per instance via JS */
+.spop{position:absolute;pointer-events:auto;cursor:pointer}
+.spop canvas{image-rendering:pixelated;display:block}
+.sbb{position:absolute;background:#fff;color:#111;font-family:var(--fp);font-size:6px;padding:5px 9px;white-space:pre;line-height:1.8;letter-spacing:.5px;opacity:0;transition:opacity .3s;pointer-events:none;box-shadow:2px 2px 0 rgba(0,0,0,.18);border-radius:2px}
+.sbb.vis{opacity:1}
 
-/* ─── EXP ─── */
+/* ── EXP ── */
 .exp-inner{padding:100px 36px 80px;max-width:820px;margin:0 auto}
-.ph{font-family:var(--fb);font-size:clamp(54px,8vw,88px);color:var(--text);text-transform:uppercase;line-height:0.84;margin-bottom:6px;letter-spacing:2px}
+.ph{font-family:var(--fb);font-size:clamp(54px,8vw,88px);color:var(--text);text-transform:uppercase;line-height:.84;margin-bottom:6px;letter-spacing:2px}
 .ph em{color:var(--amber);font-style:normal}
 .psub{font-family:var(--fm);font-size:8px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:36px}
-.bio{font-size:13px;line-height:1.78;color:rgba(232,228,221,0.68);margin-bottom:40px;max-width:660px;border-left:2px solid var(--amber);padding-left:16px}
+.bio{font-size:13px;line-height:1.78;color:rgba(232,228,221,.68);margin-bottom:40px;max-width:660px;border-left:2px solid var(--amber);padding-left:16px}
 .tl{border-top:1px solid var(--border)}
 .tli{padding:24px 0;border-bottom:1px solid var(--border);display:grid;grid-template-columns:1fr 140px;gap:14px}
 .tlr{font-family:var(--fd);font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
 .tlo{font-family:var(--fm);font-size:7px;color:var(--amber);text-transform:uppercase;letter-spacing:1px;margin-bottom:11px}
 .tld{font-family:var(--fp);font-size:6px;color:var(--muted);text-align:right;line-height:2;padding-top:2px}
 .tlb{list-style:none;display:flex;flex-direction:column;gap:5px}
-.tlb li{font-size:11px;color:rgba(232,228,221,0.62);line-height:1.55;padding-left:14px;position:relative}
+.tlb li{font-size:11px;color:rgba(232,228,221,.62);line-height:1.55;padding-left:14px;position:relative}
 .tlb li::before{content:'▸';position:absolute;left:0;color:var(--amber);font-size:8px;top:2px}
 .cbadges{margin-top:14px;display:flex;gap:7px;flex-wrap:wrap}
-.cbadge{background:rgba(245,166,35,0.07);border:1px solid rgba(245,166,35,0.18);color:rgba(245,166,35,0.8);font-family:var(--fm);font-size:7px;padding:3px 9px;letter-spacing:.5px;text-transform:uppercase}
+.cbadge{background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.18);color:rgba(245,166,35,.8);font-family:var(--fm);font-size:7px;padding:3px 9px;letter-spacing:.5px;text-transform:uppercase}
 
-/* ─── PROJECTS ─── */
+/* ── PROJECTS ── */
 .proj-inner{padding:100px 36px 80px;max-width:1060px;margin:0 auto}
 .playout{display:grid;grid-template-columns:190px 1fr;gap:52px;align-items:start}
-.pside{font-family:var(--fb);font-size:clamp(60px,6.5vw,86px);text-transform:uppercase;line-height:0.82;letter-spacing:1px;color:transparent;-webkit-text-stroke:1px rgba(245,166,35,0.28);writing-mode:vertical-rl;text-orientation:mixed;transform:rotate(180deg);position:sticky;top:120px;user-select:none}
+.pside{font-family:var(--fb);font-size:clamp(60px,6.5vw,86px);text-transform:uppercase;line-height:.82;letter-spacing:1px;color:transparent;-webkit-text-stroke:1px rgba(245,166,35,.28);writing-mode:vertical-rl;text-orientation:mixed;transform:rotate(180deg);position:sticky;top:120px;user-select:none}
 .pcol{display:flex;flex-direction:column;gap:14px}
 .pcard{background:var(--surface);border:1px solid var(--border);padding:18px 20px;cursor:pointer;position:relative;overflow:hidden;transition:transform .18s ease,border-color .18s,box-shadow .18s}
 .pcard::before{content:'';position:absolute;left:0;top:0;width:2px;height:0;background:var(--amber);transition:height .28s ease}
-.pcard:hover{transform:translateX(5px);border-color:rgba(245,166,35,0.38);box-shadow:0 0 18px rgba(245,166,35,0.05)}
+.pcard:hover{transform:translateX(5px);border-color:rgba(245,166,35,.38);box-shadow:0 0 18px rgba(245,166,35,.05)}
 .pcard:hover::before{height:100%}
 .ptag{font-family:var(--fp);font-size:6px;color:var(--amber);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;opacity:.8}
 .ptitle{font-family:var(--fd);font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
-.pdesc{font-size:11px;line-height:1.6;color:rgba(232,228,221,0.52)}
+.pdesc{font-size:11px;line-height:1.6;color:rgba(232,228,221,.52)}
 .parr{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-family:var(--fm);font-size:15px;color:var(--amber);opacity:0;transition:opacity .18s,right .18s}
 .pcard:hover .parr{opacity:1;right:11px}
 
-/* ─── CONNECT ─── */
+/* ── CONNECT ── */
 .con-inner{padding:100px 36px 80px;max-width:660px;margin:0 auto}
 .sgrid{display:flex;flex-wrap:wrap;gap:6px;margin:18px 0 40px}
-.spill{background:rgba(245,166,35,0.06);border:1px solid rgba(245,166,35,0.16);color:rgba(245,166,35,0.75);font-family:var(--fm);font-size:7px;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;cursor:default;transition:background .14s,border-color .14s,box-shadow .14s,color .14s}
-.spill:hover{background:rgba(245,166,35,0.13);border-color:var(--amber);box-shadow:0 0 7px rgba(245,166,35,0.16);color:var(--amber)}
+.spill{background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.16);color:rgba(245,166,35,.75);font-family:var(--fm);font-size:7px;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;cursor:default;transition:background .14s,border-color .14s,box-shadow .14s,color .14s}
+.spill:hover{background:rgba(245,166,35,.13);border-color:var(--amber);box-shadow:0 0 7px rgba(245,166,35,.16);color:var(--amber)}
 .cblock{border:1px solid var(--border);padding:24px;background:var(--surface);margin-bottom:24px}
 .clbl{font-family:var(--fp);font-size:5px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
 .cval{font-family:var(--fm);font-size:12px;color:var(--text);margin-bottom:16px}
 .clinks{display:flex;gap:9px;flex-wrap:wrap}
 .clink{display:inline-flex;align-items:center;gap:6px;background:transparent;color:var(--amber);border:1px solid var(--amber);font-family:var(--fp);font-size:6px;letter-spacing:1px;padding:8px 14px;text-decoration:none;text-transform:uppercase;transition:background .14s,transform .14s,box-shadow .14s}
-.clink:hover{background:rgba(245,166,35,0.09);transform:translate(-2px,-2px);box-shadow:3px 3px 0 rgba(245,166,35,0.3)}
+.clink:hover{background:rgba(245,166,35,.09);transform:translate(-2px,-2px);box-shadow:3px 3px 0 rgba(245,166,35,.3)}
 
-/* ─── WIPE TRANSITION ─── */
+/* ── WIPE ── */
 #wipe{position:fixed;inset:0;z-index:8000;pointer-events:none}
 .wbar{position:absolute;left:0;height:16.667%;width:0}
 
-/* ─── MODAL ─── */
-#modal{position:fixed;inset:0;z-index:7000;display:none;align-items:center;justify-content:center;background:rgba(7,8,15,0.85);backdrop-filter:blur(5px)}
+/* ── MODAL ── */
+#modal{position:fixed;inset:0;z-index:7000;display:none;align-items:center;justify-content:center;background:rgba(7,8,15,.85);backdrop-filter:blur(5px)}
 #modal.open{display:flex}
-.mwin{width:90%;max-width:660px;background:var(--surface2);border:1px solid var(--amber);box-shadow:0 0 60px rgba(245,166,35,0.08),6px 6px 0 rgba(245,166,35,0.12);animation:mIn .22s cubic-bezier(.175,.885,.32,1.275) forwards}
+.mwin{width:90%;max-width:660px;background:var(--s2);border:1px solid var(--amber);box-shadow:0 0 60px rgba(245,166,35,.08),6px 6px 0 rgba(245,166,35,.12);animation:mIn .22s cubic-bezier(.175,.885,.32,1.275) forwards}
 @keyframes mIn{from{transform:scale(.92) translateY(14px);opacity:0}to{transform:scale(1);opacity:1}}
 .mbar{background:var(--amber);color:var(--bg);padding:6px 12px;display:flex;align-items:center;justify-content:space-between;cursor:move;user-select:none}
 .mbt{font-family:var(--fp);font-size:6px;letter-spacing:1px;text-transform:uppercase}
 .mx{background:var(--bg);color:var(--amber);border:none;width:16px;height:16px;font-size:10px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:var(--fm)}
-.mbody{padding:20px;font-size:11.5px;color:rgba(232,228,221,0.7);line-height:1.7;min-height:140px}
+.mbody{padding:20px;font-size:11.5px;color:rgba(232,228,221,.7);line-height:1.7;min-height:140px}
 .mbody h3{font-family:var(--fd);font-size:16px;font-weight:900;text-transform:uppercase;color:var(--text);margin-bottom:9px}
 .mtag{font-family:var(--fp);font-size:6px;color:var(--amber);letter-spacing:1px;margin-bottom:8px}
 .mtechs{display:flex;flex-wrap:wrap;gap:4px;margin-top:12px}
-.mtech{background:rgba(245,166,35,0.07);border:1px solid rgba(245,166,35,0.16);color:rgba(245,166,35,0.8);font-family:var(--fm);font-size:7px;padding:3px 7px;letter-spacing:.5px;text-transform:uppercase}
+.mtech{background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.16);color:rgba(245,166,35,.8);font-family:var(--fm);font-size:7px;padding:3px 7px;letter-spacing:.5px;text-transform:uppercase}
+
+/* ── GALAGA SCREEN ── */
+#galaga-screen{position:fixed;inset:0;z-index:9000;display:none;flex-direction:column;align-items:center;justify-content:center;background:#000}
+#galaga-screen.open{display:flex}
+#galaga-canvas{display:block;image-rendering:pixelated}
+.galaga-ui{position:absolute;top:16px;left:0;right:0;display:flex;justify-content:space-between;padding:0 24px;font-family:var(--fp);font-size:8px;color:#fff;letter-spacing:1px;text-transform:uppercase}
+.galaga-exit{position:absolute;bottom:16px;font-family:var(--fp);font-size:6px;color:rgba(255,255,255,.4);letter-spacing:1px;text-transform:uppercase}
 
 /* scanlines */
-body::after{content:'';position:fixed;inset:0;z-index:9990;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.016) 3px,rgba(0,0,0,0.016) 4px);pointer-events:none}
+body::after{content:'';position:fixed;inset:0;z-index:9990;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.016) 3px,rgba(0,0,0,.016) 4px);pointer-events:none}
 
 @media(max-width:768px){
   .playout{grid-template-columns:1fr}
   .pside{writing-mode:horizontal-tb;transform:none;font-size:44px;position:static;margin-bottom:16px}
   .tli{grid-template-columns:1fr}.tld{text-align:left}
   .folders-row{gap:24px}
-  .name-top,.name-bot{font-size:clamp(72px,20vw,130px)}
+  .nchar{font-size:clamp(64px,18vw,110px)}
 }
 </style>
 </head>
@@ -250,41 +213,30 @@ body::after{content:'';position:fixed;inset:0;z-index:9990;background:repeating-
 
 <!-- LOADER -->
 <div id="loader">
-  <canvas id="ldsnoop" width="32" height="44" style="image-rendering:pixelated"></canvas>
+  <canvas id="ldsnoop" width="48" height="56" style="image-rendering:pixelated"></canvas>
   <div class="ld-name">AIDAN<br>HACK</div>
-  <div class="ld-sub">Cybersecurity Systems &mdash; Portfolio v2</div>
+  <div class="ld-sub">Cybersecurity Systems — Portfolio</div>
   <div class="ld-msg" id="ldmsg">BOOT SEQUENCE INITIATED</div>
   <div class="ld-bar"><div class="ld-fill" id="ldfill"></div></div>
   <div class="ld-pct" id="ldpct">0%</div>
   <div class="ld-lines" id="ldlines"></div>
 </div>
 
-<!-- WIPE -->
+<!-- WIPE BARS -->
 <div id="wipe">
-  <div class="wbar" style="top:0%"></div>
-  <div class="wbar" style="top:16.667%"></div>
-  <div class="wbar" style="top:33.333%"></div>
-  <div class="wbar" style="top:50%"></div>
-  <div class="wbar" style="top:66.667%"></div>
-  <div class="wbar" style="top:83.333%"></div>
+  <div class="wbar" style="top:0%"></div><div class="wbar" style="top:16.667%"></div>
+  <div class="wbar" style="top:33.333%"></div><div class="wbar" style="top:50%"></div>
+  <div class="wbar" style="top:66.667%"></div><div class="wbar" style="top:83.333%"></div>
 </div>
 
-<!-- GRID -->
 <div id="grid"></div>
-
-<!-- HUD CORNERS -->
 <div class="hud htl"><svg viewBox="0 0 36 36"><path d="M2 34L2 2L34 2" fill="none" stroke="rgba(245,166,35,0.3)" stroke-width="1.5"/><circle cx="2" cy="2" r="1.8" fill="rgba(245,166,35,0.45)"/></svg></div>
 <div class="hud htr"><svg viewBox="0 0 36 36"><path d="M2 34L2 2L34 2" fill="none" stroke="rgba(245,166,35,0.3)" stroke-width="1.5"/><circle cx="2" cy="2" r="1.8" fill="rgba(245,166,35,0.45)"/></svg></div>
 <div class="hud hbl"><svg viewBox="0 0 36 36"><path d="M2 34L2 2L34 2" fill="none" stroke="rgba(245,166,35,0.3)" stroke-width="1.5"/><circle cx="2" cy="2" r="1.8" fill="rgba(245,166,35,0.45)"/></svg></div>
 <div class="hud hbr"><svg viewBox="0 0 36 36"><path d="M2 34L2 2L34 2" fill="none" stroke="rgba(245,166,35,0.3)" stroke-width="1.5"/><circle cx="2" cy="2" r="1.8" fill="rgba(245,166,35,0.45)"/></svg></div>
 
-<!-- STATUS -->
 <div id="status"><div class="sdot" id="sdot"></div><span id="slit">0</span>/<span id="stotal">0</span><span style="margin-left:3px">LIT</span></div>
 
-<!-- HINT -->
-<div id="hint">CLICK THE <em>SHAPES</em> TO LIGHT THEM UP &mdash; ILLUMINATE THE STAGE</div>
-
-<!-- NAV -->
 <div id="nav">
   <button class="npill" id="nbtn"><div class="nblink"></div> NAVIGATE</button>
   <div class="nmenu" id="nmenu">
@@ -295,208 +247,158 @@ body::after{content:'';position:fixed;inset:0;z-index:9990;background:repeating-
   </div>
 </div>
 
-<!-- PHYSICS -->
-<canvas id="pbg"></canvas>
+<!-- TWO CANVAS LAYERS -->
+<canvas id="c-lights"></canvas>
+<canvas id="c-shapes"></canvas>
 
-<!-- SNOOPY STAGE (fullscreen, pointer-events none except on pop instances) -->
+<!-- SNOOPY STAGE -->
 <div id="snoopy-stage"></div>
 
-<!-- ══ HOME ══ -->
-<div class="page active" id="page-home">
-<div class="cl">
-<div class="home-inner">
-  <div class="sys-top">ENDPOINT SECURITY &nbsp;&#47;&#47;&nbsp; IT INFRASTRUCTURE &nbsp;&#47;&#47;&nbsp; CYBERSECURITY SYSTEMS</div>
-  <div class="sys-sub">HOVER THE LETTERS &nbsp;&#47;&#47;&nbsp; <b>CLICK SHAPES TO GLOW</b> &nbsp;&#47;&#47;&nbsp; OPEN THE FOLDERS</div>
-
-  <div class="name-block">
-    <div class="name-top" id="ntop"></div>
-    <div class="name-bot" id="nbot"></div>
+<!-- GALAGA -->
+<div id="galaga-screen">
+  <div class="galaga-ui">
+    <span>SCORE: <span id="g-score">0</span></span>
+    <span>AIDAN'S ARCADE</span>
+    <span>LIVES: <span id="g-lives">3</span></span>
   </div>
+  <canvas id="galaga-canvas"></canvas>
+  <div class="galaga-exit">ESC TO EXIT</div>
+</div>
 
+<!-- HOME -->
+<div class="page active" id="page-home"><div class="cl"><div class="home-inner">
+  <div class="sys-top">ENDPOINT SECURITY &nbsp;/&nbsp; IT INFRASTRUCTURE &nbsp;/&nbsp; CYBERSECURITY SYSTEMS</div>
+  <div class="name-block">
+    <div class="name-row name-top-row" id="ntop"></div>
+    <div class="name-rule"></div>
+    <div class="name-row name-bot-row" id="nbot"></div>
+  </div>
   <div class="folder-zone">
     <div class="folder-hint">CLICK A FOLDER TO EXPLORE</div>
     <div class="folders-row">
-
-      <!-- BLUE FOLDER — About Me -->
       <button class="fbtn" onclick="goTo('exp')">
-        <div class="ficon">
-          <svg viewBox="0 0 80 68" xmlns="http://www.w3.org/2000/svg">
-            <!-- back panel (depth face — darker blue) -->
-            <polygon points="8,60 8,14 72,14 72,60" fill="#003db5"/>
-            <!-- left depth face -->
-            <polygon points="0,68 8,60 8,14 0,22" fill="#002a80"/>
-            <!-- bottom depth face -->
-            <polygon points="0,68 8,60 72,60 80,68" fill="#001f5e"/>
-            <!-- tab on back -->
-            <polygon points="8,14 8,8 32,8 36,14" fill="#003db5"/>
-            <!-- main front face -->
-            <polygon points="8,60 8,16 72,16 72,60" fill="#1a7fff"/>
-            <!-- tab on front -->
-            <polygon points="8,16 8,10 30,10 34,16" fill="#1a7fff"/>
-            <!-- inner lines for paper effect -->
-            <line x1="16" y1="26" x2="62" y2="26" stroke="rgba(255,255,255,0.18)" stroke-width="2"/>
-            <line x1="16" y1="34" x2="52" y2="34" stroke="rgba(255,255,255,0.11)" stroke-width="2"/>
-            <line x1="16" y1="42" x2="56" y2="42" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
-            <!-- edge highlight -->
-            <line x1="8" y1="16" x2="72" y2="16" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
-            <line x1="8" y1="16" x2="8" y2="60" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-          </svg>
-        </div>
-        <span class="flbl">About Me</span>
+        <div class="ficon"><svg viewBox="0 0 80 68" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="8,60 8,14 72,14 72,60" fill="#003db5"/>
+          <polygon points="0,68 8,60 8,14 0,22" fill="#002880"/>
+          <polygon points="0,68 8,60 72,60 80,68" fill="#001a55"/>
+          <polygon points="8,14 8,8 32,8 36,14" fill="#003db5"/>
+          <polygon points="8,60 8,16 72,16 72,60" fill="#1a7fff"/>
+          <polygon points="8,16 8,10 30,10 34,16" fill="#1a7fff"/>
+          <line x1="16" y1="26" x2="62" y2="26" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+          <line x1="16" y1="34" x2="52" y2="34" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>
+          <line x1="8" y1="16" x2="72" y2="16" stroke="rgba(255,255,255,0.32)" stroke-width="1.5"/>
+        </svg></div><span class="flbl">About Me</span>
       </button>
-
-      <!-- RED FOLDER — Portfolio -->
       <button class="fbtn" onclick="goTo('proj')">
-        <div class="ficon">
-          <svg viewBox="0 0 80 68" xmlns="http://www.w3.org/2000/svg">
-            <polygon points="8,60 8,14 72,14 72,60" fill="#8a1414"/>
-            <polygon points="0,68 8,60 8,14 0,22" fill="#620e0e"/>
-            <polygon points="0,68 8,60 72,60 80,68" fill="#440a0a"/>
-            <polygon points="8,14 8,8 32,8 36,14" fill="#8a1414"/>
-            <polygon points="8,60 8,16 72,16 72,60" fill="#e74c3c"/>
-            <polygon points="8,16 8,10 30,10 34,16" fill="#e74c3c"/>
-            <line x1="16" y1="26" x2="62" y2="26" stroke="rgba(255,255,255,0.18)" stroke-width="2"/>
-            <line x1="16" y1="34" x2="52" y2="34" stroke="rgba(255,255,255,0.11)" stroke-width="2"/>
-            <line x1="16" y1="42" x2="56" y2="42" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
-            <line x1="8" y1="16" x2="72" y2="16" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
-            <line x1="8" y1="16" x2="8" y2="60" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-          </svg>
-        </div>
-        <span class="flbl">Portfolio</span>
+        <div class="ficon"><svg viewBox="0 0 80 68" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="8,60 8,14 72,14 72,60" fill="#8a1414"/>
+          <polygon points="0,68 8,60 8,14 0,22" fill="#5e0e0e"/>
+          <polygon points="0,68 8,60 72,60 80,68" fill="#3d0909"/>
+          <polygon points="8,14 8,8 32,8 36,14" fill="#8a1414"/>
+          <polygon points="8,60 8,16 72,16 72,60" fill="#e74c3c"/>
+          <polygon points="8,16 8,10 30,10 34,16" fill="#e74c3c"/>
+          <line x1="16" y1="26" x2="62" y2="26" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+          <line x1="16" y1="34" x2="52" y2="34" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>
+          <line x1="8" y1="16" x2="72" y2="16" stroke="rgba(255,255,255,0.32)" stroke-width="1.5"/>
+        </svg></div><span class="flbl">Portfolio</span>
       </button>
-
-      <!-- AMBER FOLDER — Contact -->
       <button class="fbtn" onclick="goTo('con')">
-        <div class="ficon">
-          <svg viewBox="0 0 80 68" xmlns="http://www.w3.org/2000/svg">
-            <polygon points="8,60 8,14 72,14 72,60" fill="#8a5400"/>
-            <polygon points="0,68 8,60 8,14 0,22" fill="#5c3800"/>
-            <polygon points="0,68 8,60 72,60 80,68" fill="#3d2500"/>
-            <polygon points="8,14 8,8 32,8 36,14" fill="#8a5400"/>
-            <polygon points="8,60 8,16 72,16 72,60" fill="#f5a623"/>
-            <polygon points="8,16 8,10 30,10 34,16" fill="#f5a623"/>
-            <line x1="16" y1="26" x2="62" y2="26" stroke="rgba(255,255,255,0.18)" stroke-width="2"/>
-            <line x1="16" y1="34" x2="52" y2="34" stroke="rgba(255,255,255,0.11)" stroke-width="2"/>
-            <line x1="16" y1="42" x2="56" y2="42" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
-            <line x1="8" y1="16" x2="72" y2="16" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
-            <line x1="8" y1="16" x2="8" y2="60" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-          </svg>
-        </div>
-        <span class="flbl">Contact Me</span>
+        <div class="ficon"><svg viewBox="0 0 80 68" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="8,60 8,14 72,14 72,60" fill="#8a5400"/>
+          <polygon points="0,68 8,60 8,14 0,22" fill="#5c3800"/>
+          <polygon points="0,68 8,60 72,60 80,68" fill="#3a2200"/>
+          <polygon points="8,14 8,8 32,8 36,14" fill="#8a5400"/>
+          <polygon points="8,60 8,16 72,16 72,60" fill="#f5a623"/>
+          <polygon points="8,16 8,10 30,10 34,16" fill="#f5a623"/>
+          <line x1="16" y1="26" x2="62" y2="26" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+          <line x1="16" y1="34" x2="52" y2="34" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>
+          <line x1="8" y1="16" x2="72" y2="16" stroke="rgba(255,255,255,0.32)" stroke-width="1.5"/>
+        </svg></div><span class="flbl">Contact Me</span>
       </button>
-
     </div>
   </div>
-</div>
-</div>
-</div>
+</div></div></div>
 
-<!-- ══ EXPERIENCE ══ -->
-<div class="page" id="page-exp">
-<div class="cl"><div class="exp-inner">
+<!-- EXPERIENCE -->
+<div class="page" id="page-exp"><div class="cl"><div class="exp-inner">
   <div class="ph">Exp<em>er</em>ience</div>
-  <div class="psub">CYBERSECURITY SYSTEMS &nbsp;&#47;&#47;&nbsp; ST. JOHN'S UNIVERSITY &nbsp;&#47;&#47;&nbsp; GPA 3.93 SUMMA CUM LAUDE</div>
-  <p class="bio">3.5 years in St. John's University IT Department across endpoint security, MDM, PowerShell automation, and IT asset management. Graduated Summa Cum Laude, May 2026. Currently targeting CompTIA Security+ and Microsoft MD-102.</p>
+  <div class="psub">CYBERSECURITY SYSTEMS // ST. JOHN'S UNIVERSITY // GPA 3.93 SUMMA CUM LAUDE</div>
+  <p class="bio">3.5 years in St. John's University IT Department across endpoint security, MDM, PowerShell automation, and IT asset management. Graduated Summa Cum Laude, May 2026. Targeting CompTIA Security+ and Microsoft MD-102.</p>
   <div class="tl">
-    <div class="tli">
-      <div>
-        <div class="tlr">Enterprise IT Support &amp; Systems Technician</div>
-        <div class="tlo">St. John's University &mdash; Queens, NY</div>
-        <ul class="tlb">
-          <li>Managed secure multi-OS baseline deployments using Jamf Pro and custom configuration scripts.</li>
-          <li>Authored PowerShell automation modules for software deployment, reducing manual provisioning overhead.</li>
-          <li>Administered Active Directory domain restructuring, access profiles, and directory object changes.</li>
-          <li>Deployed Windows AutoPilot enrollment and MDM policy configurations across the endpoint fleet.</li>
-          <li>Owned IT asset management lifecycle: imaging, inventory tracking, and hardware decommission.</li>
-        </ul>
-        <div class="cbadges">
-          <span class="cbadge">In Progress: CompTIA Security+</span>
-          <span class="cbadge">In Progress: Microsoft MD-102</span>
-        </div>
-      </div>
-      <div class="tld">08/2023<br>&mdash;<br>05/2026</div>
-    </div>
-    <div class="tli">
-      <div>
-        <div class="tlr">Operations &amp; Document Specialist</div>
-        <div class="tlo">OSC World (Optimum Solutions) &mdash; Lynbrook, NY</div>
-        <ul class="tlb">
-          <li>Optimized log categorization and document workflows while enforcing data isolation and privacy standards.</li>
-          <li>Streamlined internal filing processes, reducing retrieval time for critical operations documents.</li>
-        </ul>
-      </div>
-      <div class="tld">04/2021<br>&mdash;<br>08/2022</div>
-    </div>
-    <div class="tli">
-      <div>
-        <div class="tlr">Education</div>
-        <div class="tlo">St. John's University &mdash; B.S. Cybersecurity Systems</div>
-        <ul class="tlb">
-          <li>GPA: 3.93 &mdash; Graduated Summa Cum Laude, May 2026</li>
-          <li>Coursework: Network Forensics, Database Systems, Systems Administration, Security Operations</li>
-        </ul>
-      </div>
-      <div class="tld">2022<br>&mdash;<br>2026</div>
-    </div>
+    <div class="tli"><div>
+      <div class="tlr">Enterprise IT Support &amp; Systems Technician</div>
+      <div class="tlo">St. John's University &mdash; Queens, NY</div>
+      <ul class="tlb">
+        <li>Managed secure multi-OS baseline deployments using Jamf Pro and custom configuration scripts.</li>
+        <li>Authored PowerShell automation modules for software deployment, reducing manual provisioning overhead.</li>
+        <li>Administered Active Directory domain restructuring, access profiles, and directory object changes.</li>
+        <li>Deployed Windows AutoPilot enrollment and MDM policy configurations across the endpoint fleet.</li>
+        <li>Owned IT asset management lifecycle: imaging, inventory tracking, and hardware decommission.</li>
+      </ul>
+      <div class="cbadges"><span class="cbadge">In Progress: CompTIA Security+</span><span class="cbadge">In Progress: Microsoft MD-102</span></div>
+    </div><div class="tld">08/2023<br>&mdash;<br>05/2026</div></div>
+    <div class="tli"><div>
+      <div class="tlr">Operations &amp; Document Specialist</div>
+      <div class="tlo">OSC World (Optimum Solutions) &mdash; Lynbrook, NY</div>
+      <ul class="tlb">
+        <li>Optimized log categorization and document workflows while enforcing data isolation and privacy standards.</li>
+        <li>Streamlined internal filing processes, reducing retrieval time for critical operations documents.</li>
+      </ul>
+    </div><div class="tld">04/2021<br>&mdash;<br>08/2022</div></div>
+    <div class="tli"><div>
+      <div class="tlr">Education</div>
+      <div class="tlo">St. John's University &mdash; B.S. Cybersecurity Systems</div>
+      <ul class="tlb">
+        <li>GPA: 3.93 &mdash; Graduated Summa Cum Laude, May 2026</li>
+        <li>Coursework: Network Forensics, Database Systems, Systems Administration, Security Operations</li>
+      </ul>
+    </div><div class="tld">2022<br>&mdash;<br>2026</div></div>
   </div>
-</div></div>
-</div>
+</div></div></div>
 
-<!-- ══ PROJECTS ══ -->
-<div class="page" id="page-proj">
-<div class="cl"><div class="proj-inner">
+<!-- PROJECTS -->
+<div class="page" id="page-proj"><div class="cl"><div class="proj-inner">
   <div class="playout">
     <div class="pside">Selected<br>Work</div>
     <div class="pcol">
-      <div class="pcard" onclick="openModal('ApplyFlow','Full-Stack Automation','Full-stack job application automation tool. React frontend, Node.js/SQLite backend, Playwright browser automation, and Claude API integration for AI-generated cover letters tailored to each posting.','React,Node.js,SQLite,Playwright,Claude API,JavaScript')">
+      <div class="pcard" onclick="openModal('ApplyFlow','Full-Stack Automation','Full-stack job application automation. React frontend, Node.js/SQLite backend, Playwright browser automation, Claude API for AI-generated cover letters tailored to each posting.','React,Node.js,SQLite,Playwright,Claude API,JavaScript')">
         <div class="ptag">Full-Stack Automation</div><div class="ptitle">ApplyFlow</div>
-        <p class="pdesc">End-to-end job application automation with AI cover letters, Playwright form filling, and a React dashboard to track every application.</p>
-        <span class="parr">&#x2192;</span>
+        <p class="pdesc">End-to-end job application automation with AI cover letters, Playwright form filling, and a React dashboard.</p><span class="parr">&#x2192;</span>
       </div>
       <div class="pcard" onclick="openModal('Aidan\'s Archive','Electron / Desktop','Custom Electron desktop app for personal anime streaming. Torrent-based playback, subtitle rendering, dark charcoal/amber UI. Fully portable, no compilation required.','Electron,JavaScript,Node.js,CSS')">
         <div class="ptag">Electron / Desktop</div><div class="ptitle">Aidan&rsquo;s Archive</div>
-        <p class="pdesc">Personal anime streaming desktop app with torrent-based playback, subtitle rendering, and a dark amber UI. Controller-friendly and fully portable.</p>
-        <span class="parr">&#x2192;</span>
+        <p class="pdesc">Personal anime streaming desktop app with torrent-based playback, subtitle rendering, and a dark amber UI.</p><span class="parr">&#x2192;</span>
       </div>
-      <div class="pcard" onclick="openModal('Aidan\'s Bastion','Desktop App','Controller-first fullscreen PC game launcher. Gamepad navigation, custom game library tiles, direct launching. Portable batch file, no install needed.','Electron,JavaScript,CSS,Node.js')">
+      <div class="pcard" onclick="openModal('Aidan\'s Bastion','Desktop App','Controller-first fullscreen PC game launcher. Gamepad navigation, custom game library tiles, direct launching. Portable, no install needed.','Electron,JavaScript,CSS,Node.js')">
         <div class="ptag">Desktop App</div><div class="ptitle">Aidan&rsquo;s Bastion</div>
-        <p class="pdesc">Fullscreen controller-first game launcher with gamepad support, custom library tiles, and console-style big-screen navigation.</p>
-        <span class="parr">&#x2192;</span>
+        <p class="pdesc">Fullscreen controller-first game launcher with gamepad support and console-style big-screen navigation.</p><span class="parr">&#x2192;</span>
       </div>
-      <div class="pcard" onclick="openModal('Network Forensics Lab','Security Research','Hands-on lab using Wireshark and Kali Linux. 802.11 wireless pcap analysis, SSH brute-force forensics, TCP stream reconstruction, and attack signature identification.','Wireshark,Kali Linux,tcpdump,bash,Python')">
+      <div class="pcard" onclick="openModal('Network Forensics Lab','Security Research','Hands-on lab using Wireshark and Kali Linux. 802.11 wireless pcap analysis, SSH brute-force forensics, TCP stream reconstruction, attack signature identification.','Wireshark,Kali Linux,tcpdump,bash,Python')">
         <div class="ptag">Security Research</div><div class="ptitle">Network Forensics Lab</div>
-        <p class="pdesc">Packet capture analysis: 802.11 wireless forensics, SSH brute-force detection, TCP reconstruction, network attack signature ID.</p>
-        <span class="parr">&#x2192;</span>
+        <p class="pdesc">Packet capture analysis: 802.11 wireless forensics, SSH brute-force detection, TCP reconstruction.</p><span class="parr">&#x2192;</span>
       </div>
-      <div class="pcard" onclick="openModal('Automated Deployment Pipeline','PowerShell / MDM','Modular PowerShell architecture for enterprise endpoint management. Pre/post-install validation, logging, error handling, Jamf Pro integration for macOS and Windows.','PowerShell,Jamf Pro,Windows AutoPilot,Active Directory')">
+      <div class="pcard" onclick="openModal('Automated Deployment Pipeline','PowerShell / MDM','Modular PowerShell architecture for enterprise endpoint management. Pre/post-install validation, logging, Jamf Pro integration for macOS and Windows.','PowerShell,Jamf Pro,Windows AutoPilot,Active Directory')">
         <div class="ptag">PowerShell / MDM</div><div class="ptitle">Automated Deployment Pipeline</div>
-        <p class="pdesc">Modular PowerShell scripts for enterprise software deployment with validation, error handling, and Jamf Pro integration.</p>
-        <span class="parr">&#x2192;</span>
+        <p class="pdesc">Modular PowerShell scripts for enterprise software deployment with validation and Jamf Pro integration.</p><span class="parr">&#x2192;</span>
       </div>
-      <div class="pcard" onclick="openModal('This Portfolio','Web Development','Vanilla HTML/CSS/JS. Physics background via Matter.js, Snoopy pixel art pop-ups, interactive glow shapes, Bebas Neue stacked name, six-panel wipe transitions.','HTML,CSS,JavaScript,Matter.js')">
+      <div class="pcard" onclick="openModal('This Portfolio','Web Development','Vanilla HTML/CSS/JS. Two canvas layers: glowing lights + destroyable shapes. Snoopy pop-ups, hidden Galaga easter egg, Carlos-style 3D text, six-panel wipe transitions.','HTML,CSS,JavaScript,Canvas API')">
         <div class="ptag">Web Development</div><div class="ptitle">This Portfolio</div>
-        <p class="pdesc">The one you&rsquo;re looking at. Click shapes to light them, click Snoopy for a quote, hover the big name letters.</p>
-        <span class="parr">&#x2192;</span>
+        <p class="pdesc">The one you&rsquo;re looking at. Destroy enough shapes to unlock something fun.</p><span class="parr">&#x2192;</span>
       </div>
     </div>
   </div>
-</div></div>
-</div>
+</div></div></div>
 
-<!-- ══ CONNECT ══ -->
-<div class="page" id="page-con">
-<div class="cl"><div class="con-inner">
+<!-- CONNECT -->
+<div class="page" id="page-con"><div class="cl"><div class="con-inner">
   <div class="ph">Con<em>nect</em></div>
-  <div class="psub">VALLEY STREAM, NY &nbsp;&#47;&#47;&nbsp; OPEN TO WORK &nbsp;&#47;&#47;&nbsp; ENDPOINT SECURITY &amp; IT OPS</div>
+  <div class="psub">VALLEY STREAM, NY // OPEN TO WORK // ENDPOINT SECURITY &amp; IT OPS</div>
   <div class="sgrid">
-    <span class="spill">Jamf Pro</span><span class="spill">Windows AutoPilot</span>
-    <span class="spill">PowerShell</span><span class="spill">Active Directory</span>
-    <span class="spill">Kali Linux</span><span class="spill">Wireshark</span>
-    <span class="spill">Endpoint Security</span><span class="spill">MDM</span>
-    <span class="spill">IT Asset Management</span><span class="spill">React</span>
-    <span class="spill">Node.js</span><span class="spill">Python</span>
-    <span class="spill">Network Forensics</span><span class="spill">CompTIA Security+</span>
-    <span class="spill">Microsoft MD-102</span><span class="spill">Spanish</span>
+    <span class="spill">Jamf Pro</span><span class="spill">Windows AutoPilot</span><span class="spill">PowerShell</span>
+    <span class="spill">Active Directory</span><span class="spill">Kali Linux</span><span class="spill">Wireshark</span>
+    <span class="spill">Endpoint Security</span><span class="spill">MDM</span><span class="spill">IT Asset Management</span>
+    <span class="spill">React</span><span class="spill">Node.js</span><span class="spill">Python</span>
+    <span class="spill">Network Forensics</span><span class="spill">CompTIA Security+</span><span class="spill">Microsoft MD-102</span><span class="spill">Spanish</span>
   </div>
   <div class="cblock">
     <div class="clbl">Email</div><div class="cval">aidan.hack708@gmail.com</div>
@@ -507,8 +409,7 @@ body::after{content:'';position:fixed;inset:0;z-index:9990;background:repeating-
       <a href="https://github.com/MrHackaMan" target="_blank" class="clink">GitHub</a>
     </div>
   </div>
-</div></div>
-</div>
+</div></div></div>
 
 <!-- MODAL -->
 <div id="modal">
@@ -519,480 +420,826 @@ body::after{content:'';position:fixed;inset:0;z-index:9990;background:repeating-
 </div>
 
 <script>
-// ═══════════════════════════
-// SNOOPY PIXEL ART ENGINE
-// ═══════════════════════════
-// 16x22 art grid, 2px per pixel, canvas 32x44
-// Colors: 0=transparent, 1=white, 2=black, 3=red(collar), 4=skin-nose
-const SP={W:16,H:22,S:2};
-// Palette
-const PAL={0:null,1:'#f5f5f5',2:'#1a1a1a',3:'#d63030',4:'#e8c8a0'};
+'use strict';
+// ═══════════════════════════════════════════════════════════
+// SNOOPY PIXEL ART
+// 24 cols × 28 rows, each pixel = 2px on canvas (48×56)
+// Anatomy: big round head, long snout pointing right,
+// floppy left ear drooping down, black back spot, red collar
+// ═══════════════════════════════════════════════════════════
+const W='W',B='B',R='R',_=0;
+const SCOLS={W:'#f0f0f0',B:'#1c1c1c',R:'#d42222'};
+const SW=24,SH=28,SS=2; // art width, height, pixel scale
 
-// Snoopy frames — walking cycle (3 frames) + sitting (1 frame) + jumping (1 frame)
-const FRAMES={
-  // walk0: both legs near-center
-  w0:[
-    [0,0,0,2,2,2,2,2,0,0,0,0,0,0,0,0],
-    [0,0,2,1,1,1,1,1,2,2,0,0,0,0,0,0],
-    [0,2,1,1,1,2,1,1,2,1,2,0,0,0,0,0],
-    [0,2,1,1,1,1,1,1,1,1,2,0,0,0,0,0],
-    [2,1,1,1,2,1,1,2,1,1,1,2,0,0,0,0],
-    [2,1,1,1,1,1,1,1,1,1,1,2,0,0,0,0],
-    [0,2,1,2,2,2,2,1,1,1,2,0,0,0,0,0],
-    [0,0,2,1,1,1,2,2,2,2,0,0,0,0,0,0],
-    [0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0],
-    [0,2,2,1,1,1,2,2,2,2,2,2,2,0,0,0],
-    [2,1,1,1,1,1,1,1,1,1,1,1,1,2,0,0],
-    [0,2,1,1,3,3,3,3,3,3,3,1,2,0,0,0],
-    [0,0,2,1,1,1,1,1,1,1,1,2,0,0,0,0],
-    [0,0,2,1,1,1,1,1,1,1,1,2,0,0,0,0],
-    [0,2,1,1,2,1,1,1,1,2,1,1,2,0,0,0],
-    [0,2,1,1,2,0,0,0,0,2,1,1,2,0,0,0],
-    [0,2,1,1,2,0,0,0,0,2,1,1,2,0,0,0],
-    [0,0,2,2,0,0,0,0,0,0,2,2,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  ],
-  // walk1: left leg fwd
-  w1:[
-    [0,0,0,2,2,2,2,2,0,0,0,0,0,0,0,0],
-    [0,0,2,1,1,1,1,1,2,2,0,0,0,0,0,0],
-    [0,2,1,1,1,2,1,1,2,1,2,0,0,0,0,0],
-    [0,2,1,1,1,1,1,1,1,1,2,0,0,0,0,0],
-    [2,1,1,1,2,1,1,2,1,1,1,2,0,0,0,0],
-    [2,1,1,1,1,1,1,1,1,1,1,2,0,0,0,0],
-    [0,2,1,2,2,2,2,1,1,1,2,0,0,0,0,0],
-    [0,0,2,1,1,1,2,2,2,2,0,0,0,0,0,0],
-    [0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0],
-    [0,2,2,1,1,1,2,2,2,2,2,2,2,0,0,0],
-    [2,1,1,1,1,1,1,1,1,1,1,1,1,2,0,0],
-    [0,2,1,1,3,3,3,3,3,3,3,1,2,0,0,0],
-    [0,0,2,1,1,1,1,1,1,1,1,2,0,0,0,0],
-    [0,0,2,1,1,1,1,1,1,1,1,2,0,0,0,0],
-    [0,2,1,1,2,1,1,1,1,2,1,1,2,0,0,0],
-    [0,2,1,2,0,0,0,0,0,2,1,1,2,0,0,0],
-    [2,1,2,0,0,0,0,0,0,0,2,1,2,0,0,0],
-    [2,2,0,0,0,0,0,0,0,0,0,2,2,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  ],
-  // walk2: right leg fwd (mirror of w1 legs)
-  w2:[
-    [0,0,0,2,2,2,2,2,0,0,0,0,0,0,0,0],
-    [0,0,2,1,1,1,1,1,2,2,0,0,0,0,0,0],
-    [0,2,1,1,1,2,1,1,2,1,2,0,0,0,0,0],
-    [0,2,1,1,1,1,1,1,1,1,2,0,0,0,0,0],
-    [2,1,1,1,2,1,1,2,1,1,1,2,0,0,0,0],
-    [2,1,1,1,1,1,1,1,1,1,1,2,0,0,0,0],
-    [0,2,1,2,2,2,2,1,1,1,2,0,0,0,0,0],
-    [0,0,2,1,1,1,2,2,2,2,0,0,0,0,0,0],
-    [0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0],
-    [0,2,2,1,1,1,2,2,2,2,2,2,2,0,0,0],
-    [2,1,1,1,1,1,1,1,1,1,1,1,1,2,0,0],
-    [0,2,1,1,3,3,3,3,3,3,3,1,2,0,0,0],
-    [0,0,2,1,1,1,1,1,1,1,1,2,0,0,0,0],
-    [0,0,2,1,1,1,1,1,1,1,1,2,0,0,0,0],
-    [0,2,1,1,2,1,1,1,1,2,1,1,2,0,0,0],
-    [0,2,1,1,2,0,0,0,0,2,1,2,0,0,0,0],
-    [0,2,1,1,2,0,0,0,0,0,2,1,2,0,0,0],
-    [0,0,2,2,0,0,0,0,0,0,0,2,1,2,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,2,2,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  ],
-  // sit: Snoopy sitting on his doghouse roof pose (simplified)
-  sit:[
-    [0,0,0,2,2,2,2,2,0,0,0,0,0,0,0,0],
-    [0,0,2,1,1,1,1,1,2,2,0,0,0,0,0,0],
-    [0,2,1,1,1,2,1,1,2,1,2,0,0,0,0,0],
-    [0,2,1,1,1,1,1,1,1,1,2,0,0,0,0,0],
-    [2,1,1,1,2,1,1,2,1,1,1,2,0,0,0,0],
-    [2,1,1,1,1,1,1,1,1,1,1,2,0,0,0,0],
-    [0,2,1,2,2,2,2,1,1,1,2,0,0,0,0,0],
-    [0,0,2,1,1,1,2,2,2,2,0,0,0,0,0,0],
-    [0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0],
-    [0,2,2,1,1,1,2,2,2,2,2,2,2,0,0,0],
-    [2,1,1,1,1,1,1,1,1,1,1,1,1,2,0,0],
-    [0,2,1,1,3,3,3,3,3,3,3,1,2,0,0,0],
-    [0,0,2,1,1,1,1,1,1,1,1,2,0,0,0,0],
-    [0,0,2,1,1,1,1,1,1,1,1,2,0,0,0,0],
-    [0,0,0,2,1,1,2,1,1,2,2,0,0,0,0,0],
-    [0,0,0,0,2,2,0,0,2,1,1,2,0,0,0,0],
-    [0,0,0,0,0,0,0,0,2,1,1,2,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,2,2,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  ]
-};
-const WALK_FRAMES=[FRAMES.w0,FRAMES.w1,FRAMES.w0,FRAMES.w2];
+// Snoopy facing RIGHT
+// Ear is on LEFT side of head (rows 0-6, cols 0-2 = left side of head)
+// Snout extends to the RIGHT (cols 17-23)
+// Black back spot: rows 17-19, cols 4-9
+const SNOOPY_STAND=[
+//   0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+    [_,_,_,_,_,_,B,B,B,B,B,B,_,_,_,_,_,_,_,_,_,_,_,_], // 0
+    [_,_,_,_,_,B,W,W,W,W,W,W,B,_,_,_,_,_,_,_,_,_,_,_], // 1
+    [_,_,_,_,B,W,W,W,W,W,W,W,W,B,_,_,_,_,_,_,_,_,_,_], // 2
+    [_,_,_,B,W,W,W,W,W,W,W,W,W,W,B,_,_,_,_,_,_,_,_,_], // 3
+    [_,_,B,B,W,W,B,_,W,W,B,W,W,W,W,B,_,_,_,_,_,_,_,_], // 4 eyes
+    [_,B,W,W,W,W,_,_,W,W,W,W,W,W,W,W,B,_,_,_,_,_,_,_], // 5
+    [_,B,W,W,W,W,_,_,W,W,W,W,W,W,W,W,W,B,B,B,B,_,_,_], // 6 snout grows
+    [B,W,W,W,W,W,_,_,W,W,W,W,W,W,W,W,W,W,W,W,W,B,_,_], // 7
+    [B,W,W,W,W,W,_,_,W,W,W,W,W,W,W,W,W,W,W,W,W,W,B,B], // 8 nose tip
+    [_,B,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,B,_,_], // 9
+    [_,_,B,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,B,_,_,_], // 10
+    [_,_,_,B,B,B,W,W,W,W,W,W,W,W,W,W,B,B,B,_,_,_,_,_], // 11 chin
+    [_,_,_,_,_,B,R,R,R,R,R,R,R,R,R,R,B,_,_,_,_,_,_,_], // 12 collar
+    [_,_,_,B,W,W,W,W,W,W,W,W,W,W,W,W,W,B,_,_,_,_,_,_], // 13 body
+    [_,_,B,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,B,_,_,_,_,_], // 14
+    [_,_,B,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,B,_,_,_,_,_], // 15
+    [_,_,B,W,W,B,B,B,B,W,W,W,W,W,W,W,W,W,B,_,_,_,_,_], // 16 spot top
+    [_,_,B,W,B,B,B,B,B,B,W,W,W,W,W,W,W,W,B,_,_,_,_,_], // 17 spot
+    [_,_,B,W,B,B,B,B,B,B,W,W,W,W,W,W,W,W,B,_,_,_,_,_], // 18 spot
+    [_,_,_,B,W,W,W,W,W,W,W,W,W,W,W,W,W,B,_,_,_,_,_,_], // 19
+    [_,_,_,_,B,W,W,B,W,W,W,W,B,W,W,B,_,_,_,_,_,_,_,_], // 20 hips
+    [_,_,_,_,B,W,W,B,_,_,_,_,B,W,W,B,_,_,_,_,_,_,_,_], // 21 legs
+    [_,_,_,_,B,W,W,B,_,_,_,_,B,W,W,B,_,_,_,_,_,_,_,_], // 22
+    [_,_,_,_,_,B,B,_,_,_,_,_,_,B,B,_,_,_,_,_,_,_,_,_], // 23 feet
+    [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+];
+// Walk A: left leg kicks forward (rows 21-23 legs shifted)
+const SNOOPY_WALKA=[
+    [_,_,_,_,_,_,B,B,B,B,B,B,_,_,_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,_,_,B,W,W,W,W,W,W,B,_,_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,_,B,W,W,W,W,W,W,W,W,B,_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,B,W,W,W,W,W,W,W,W,W,W,B,_,_,_,_,_,_,_,_,_],
+    [_,_,B,B,W,W,B,_,W,W,B,W,W,W,W,B,_,_,_,_,_,_,_,_],
+    [_,B,W,W,W,W,_,_,W,W,W,W,W,W,W,W,B,_,_,_,_,_,_,_],
+    [_,B,W,W,W,W,_,_,W,W,W,W,W,W,W,W,W,B,B,B,B,_,_,_],
+    [B,W,W,W,W,W,_,_,W,W,W,W,W,W,W,W,W,W,W,W,W,B,_,_],
+    [B,W,W,W,W,W,_,_,W,W,W,W,W,W,W,W,W,W,W,W,W,W,B,B],
+    [_,B,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,B,_,_],
+    [_,_,B,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,B,_,_,_],
+    [_,_,_,B,B,B,W,W,W,W,W,W,W,W,W,W,B,B,B,_,_,_,_,_],
+    [_,_,_,_,_,B,R,R,R,R,R,R,R,R,R,R,B,_,_,_,_,_,_,_],
+    [_,_,_,B,W,W,W,W,W,W,W,W,W,W,W,W,W,B,_,_,_,_,_,_],
+    [_,_,B,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,B,_,_,_,_,_],
+    [_,_,B,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,B,_,_,_,_,_],
+    [_,_,B,W,W,B,B,B,B,W,W,W,W,W,W,W,W,W,B,_,_,_,_,_],
+    [_,_,B,W,B,B,B,B,B,B,W,W,W,W,W,W,W,W,B,_,_,_,_,_],
+    [_,_,B,W,B,B,B,B,B,B,W,W,W,W,W,W,W,W,B,_,_,_,_,_],
+    [_,_,_,B,W,W,W,W,W,W,W,W,W,W,W,W,W,B,_,_,_,_,_,_],
+    [_,_,_,_,B,W,W,B,W,W,W,W,B,W,W,B,_,_,_,_,_,_,_,_],
+    [B,B,_,_,B,W,W,B,_,_,_,_,B,W,W,B,_,_,_,_,_,_,_,_], // left leg forward
+    [W,W,B,_,_,B,B,_,_,_,_,_,_,B,B,_,_,_,_,_,_,_,_,_],
+    [B,B,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+];
+// Walk B: right leg kicks forward
+const SNOOPY_WALKB=[
+    [_,_,_,_,_,_,B,B,B,B,B,B,_,_,_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,_,_,B,W,W,W,W,W,W,B,_,_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,_,B,W,W,W,W,W,W,W,W,B,_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,B,W,W,W,W,W,W,W,W,W,W,B,_,_,_,_,_,_,_,_,_],
+    [_,_,B,B,W,W,B,_,W,W,B,W,W,W,W,B,_,_,_,_,_,_,_,_],
+    [_,B,W,W,W,W,_,_,W,W,W,W,W,W,W,W,B,_,_,_,_,_,_,_],
+    [_,B,W,W,W,W,_,_,W,W,W,W,W,W,W,W,W,B,B,B,B,_,_,_],
+    [B,W,W,W,W,W,_,_,W,W,W,W,W,W,W,W,W,W,W,W,W,B,_,_],
+    [B,W,W,W,W,W,_,_,W,W,W,W,W,W,W,W,W,W,W,W,W,W,B,B],
+    [_,B,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,B,_,_],
+    [_,_,B,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,B,_,_,_],
+    [_,_,_,B,B,B,W,W,W,W,W,W,W,W,W,W,B,B,B,_,_,_,_,_],
+    [_,_,_,_,_,B,R,R,R,R,R,R,R,R,R,R,B,_,_,_,_,_,_,_],
+    [_,_,_,B,W,W,W,W,W,W,W,W,W,W,W,W,W,B,_,_,_,_,_,_],
+    [_,_,B,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,B,_,_,_,_,_],
+    [_,_,B,W,W,W,W,W,W,W,W,W,W,W,W,W,W,W,B,_,_,_,_,_],
+    [_,_,B,W,W,B,B,B,B,W,W,W,W,W,W,W,W,W,B,_,_,_,_,_],
+    [_,_,B,W,B,B,B,B,B,B,W,W,W,W,W,W,W,W,B,_,_,_,_,_],
+    [_,_,B,W,B,B,B,B,B,B,W,W,W,W,W,W,W,W,B,_,_,_,_,_],
+    [_,_,_,B,W,W,W,W,W,W,W,W,W,W,W,W,W,B,_,_,_,_,_,_],
+    [_,_,_,_,B,W,W,B,W,W,W,W,B,W,W,B,_,_,_,_,_,_,_,_],
+    [_,_,_,_,B,W,W,B,_,_,_,_,B,W,W,B,B,B,_,_,_,_,_,_], // right leg forward
+    [_,_,_,_,_,B,B,_,_,_,_,_,B,W,W,W,W,B,_,_,_,_,_,_],
+    [_,_,_,_,_,_,_,_,_,_,_,_,_,B,B,B,_,_,_,_,_,_,_,_],
+    [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+    [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+];
+const WALK_CYCLE=[SNOOPY_STAND,SNOOPY_WALKA,SNOOPY_STAND,SNOOPY_WALKB];
 
 function drawSnoopy(ctx,grid,flipX,scale){
-  scale=scale||SP.S;
-  ctx.clearRect(0,0,SP.W*scale,SP.H*scale);
+  scale=scale||SS;
+  ctx.clearRect(0,0,SW*scale,SH*scale);
   ctx.save();
-  if(flipX){ctx.translate(SP.W*scale,0);ctx.scale(-1,1);}
-  for(let r=0;r<SP.H;r++){
+  if(flipX){ctx.translate(SW*scale,0);ctx.scale(-1,1);}
+  for(let r=0;r<SH;r++){
     if(!grid[r])continue;
-    for(let c=0;c<SP.W;c++){
+    for(let c=0;c<SW;c++){
       const v=grid[r][c];
-      if(!v||!PAL[v])continue;
-      ctx.fillStyle=PAL[v];
+      if(!v)continue;
+      ctx.fillStyle=SCOLS[v];
       ctx.fillRect(c*scale,r*scale,scale,scale);
     }
   }
   ctx.restore();
 }
 
-// Draw on loader canvas immediately
-(function(){
-  const c=document.getElementById('ldsnoop');
-  if(c){const x=c.getContext('2d');drawSnoopy(x,FRAMES.sit,false,2);}
-})();
+// Draw on loader
+{const c=document.getElementById('ldsnoop');drawSnoopy(c.getContext('2d'),SNOOPY_STAND,false,2);}
 
-// ═══════════════════════════
+// ═══════════════════════════════════════════════════════════
 // SNOOPY POP-UP SYSTEM
-// ═══════════════════════════
+// ═══════════════════════════════════════════════════════════
 const QUOTES=[
   'GOOD GRIEF!','RATS!','WOOF!','HAPPINESS IS...',
-  '...zzzz','SECURITY+?','I NEED KIBBLE!',
-  'BONK!','BLOCKHEAD.','*sniff sniff*',
-  'IT IS DARK AND\nSTORMY NIGHT...','SUPPERTIME!',
-  'I\'M THE WORLD\nFAMOUS HACKER!','STAY SECURE!',
-  'CLICK ME!','GREAT SCOTT!'
+  '...zzzz','SECURITY+?','I NEED KIBBLE!','BONK!',
+  'BLOCKHEAD.','*sniff sniff*',
+  'IT IS A DARK AND\nSTORMY NIGHT...','SUPPERTIME!',
+  'WORLD FAMOUS\nHACKER!','STAY SECURE!',
+  'TO CODE OR\nNOT TO CODE...','AW, NUTS!'
 ];
-
 const stage=document.getElementById('snoopy-stage');
 let popActive=false;
-let popTimeout=null;
 
 function spawnSnoopy(){
   if(popActive)return;
   popActive=true;
-
-  // pick a random edge: 0=bottom, 1=left, 2=right
   const edge=Math.floor(Math.random()*3);
-  const S=3; // scale: 48x66 canvas
-  const CW=SP.W*S, CH=SP.H*S;
+  const SC=3,CW=SW*SC,CH=SH*SC;
   const quote=QUOTES[Math.floor(Math.random()*QUOTES.length)];
-  const flip=Math.random()<0.5;
+  const flip=(edge===2);
 
-  // container
   const wrap=document.createElement('div');
-  wrap.className='snoopy-pop';
-  wrap.style.transition='transform 0.5s cubic-bezier(0.34,1.56,0.64,1),opacity 0.4s ease';
-  wrap.style.opacity='0';
+  wrap.className='spop';
+  wrap.style.cssText='transition:transform .55s cubic-bezier(.34,1.56,.64,1),opacity .4s ease;opacity:0;z-index:5';
 
-  // canvas
   const cnv=document.createElement('canvas');
-  cnv.width=CW; cnv.height=CH;
-  cnv.style.imageRendering='pixelated';
+  cnv.width=CW;cnv.height=CH;cnv.style.imageRendering='pixelated';
   wrap.appendChild(cnv);
+  drawSnoopy(cnv.getContext('2d'),SNOOPY_STAND,flip,SC);
 
-  // speech bubble
   const bbl=document.createElement('div');
-  bbl.className='sbubble';
+  bbl.className='sbb';
   bbl.textContent=quote;
-  bbl.style.whiteSpace='pre'; // allow \n
+  const tail=document.createElement('div');
+  tail.style.position='absolute';
+  tail.style.width=tail.style.height='0';
+  bbl.appendChild(tail);
   wrap.appendChild(bbl);
 
-  // position based on edge
-  let startTransform, endTransform, bblStyle='';
+  let sT,eT;
   if(edge===0){
-    // bottom edge, random X
-    const bx=Math.floor(Math.random()*(window.innerWidth-CW-40))+20;
-    wrap.style.left=bx+'px';
-    wrap.style.bottom='0px';
-    startTransform='translateY('+CH+'px)';
-    endTransform='translateY(-'+Math.floor(CH*0.6)+'px)';
-    bbl.style.bottom=(CH+6)+'px';
-    bbl.style.left='0px';
-    // tail points down
-    bbl.style.cssText+=';border-radius:3px;padding:4px 8px;bottom:'+(CH+4)+'px;left:0px;position:absolute;';
-    // add pseudo-tail via a tiny triangle div
-    const tail=document.createElement('div');
-    tail.style.cssText='position:absolute;top:100%;left:10px;width:0;height:0;border:5px solid transparent;border-top-color:#fff;';
-    bbl.appendChild(tail);
+    const bx=20+Math.floor(Math.random()*(innerWidth-CW-60));
+    wrap.style.cssText+=`;left:${bx}px;bottom:0`;
+    sT=`translateY(${CH+10}px)`;eT=`translateY(-${Math.floor(CH*.7)}px)`;
+    bbl.style.cssText+=`;position:absolute;bottom:${CH+8}px;left:0`;
+    tail.style.cssText='position:absolute;top:100%;left:12px;border:6px solid transparent;border-top-color:#fff';
   } else if(edge===1){
-    // left edge, random Y
-    const by=Math.floor(Math.random()*(window.innerHeight-CH-100))+50;
-    wrap.style.left='0px';
-    wrap.style.top=by+'px';
-    startTransform='translateX(-'+CW+'px)';
-    endTransform='translateX('+Math.floor(CW*0.5)+'px)';
-    bbl.style.cssText+=';border-radius:3px;padding:4px 8px;top:4px;left:'+(CW+6)+'px;position:absolute;';
-    const tail=document.createElement('div');
-    tail.style.cssText='position:absolute;right:100%;top:50%;transform:translateY(-50%);width:0;height:0;border:5px solid transparent;border-right-color:#fff;';
-    bbl.appendChild(tail);
+    const by=60+Math.floor(Math.random()*(innerHeight-CH-120));
+    wrap.style.cssText+=`;left:0;top:${by}px`;
+    sT=`translateX(-${CW+10}px)`;eT=`translateX(${Math.floor(CW*.6)}px)`;
+    bbl.style.cssText+=`;position:absolute;top:4px;left:${CW+8}px`;
+    tail.style.cssText='position:absolute;top:50%;right:100%;transform:translateY(-50%);border:6px solid transparent;border-right-color:#fff';
   } else {
-    // right edge, random Y
-    const by=Math.floor(Math.random()*(window.innerHeight-CH-100))+50;
-    wrap.style.right='0px';
-    wrap.style.top=by+'px';
-    startTransform='translateX('+CW+'px)';
-    endTransform='translateX(-'+Math.floor(CW*0.5)+'px)';
-    bbl.style.cssText+=';border-radius:3px;padding:4px 8px;top:4px;right:'+(CW+6)+'px;position:absolute;';
-    const tail=document.createElement('div');
-    tail.style.cssText='position:absolute;left:100%;top:50%;transform:translateY(-50%);width:0;height:0;border:5px solid transparent;border-left-color:#fff;';
-    bbl.appendChild(tail);
+    const by=60+Math.floor(Math.random()*(innerHeight-CH-120));
+    wrap.style.cssText+=`;right:0;top:${by}px`;
+    sT=`translateX(${CW+10}px)`;eT=`translateX(-${Math.floor(CW*.6)}px)`;
+    bbl.style.cssText+=`;position:absolute;top:4px;right:${CW+8}px`;
+    tail.style.cssText='position:absolute;top:50%;left:100%;transform:translateY(-50%);border:6px solid transparent;border-left-color:#fff';
   }
-
-  wrap.style.transform=startTransform;
+  wrap.style.transform=sT;
   stage.appendChild(wrap);
 
-  // draw snoopy
-  const ctx=cnv.getContext('2d');
-  drawSnoopy(ctx,FRAMES.sit,flip,S);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    wrap.style.opacity='1';wrap.style.transform=eT;
+    setTimeout(()=>bbl.classList.add('vis'),320);
+  }));
 
-  // animate in
-  requestAnimationFrame(()=>{
-    requestAnimationFrame(()=>{
-      wrap.style.opacity='1';
-      wrap.style.transform=endTransform;
-      // show bubble after 300ms
-      setTimeout(()=>bbl.classList.add('vis'),300);
-    });
-  });
-
-  // click to dismiss + quote cycle
-  wrap.addEventListener('click',()=>{
-    bbl.textContent=QUOTES[Math.floor(Math.random()*QUOTES.length)];
-    bbl.style.whiteSpace='pre';
-  });
-
-  // auto-dismiss after 3.5-6s
-  const stayTime=3500+Math.random()*2500;
-  popTimeout=setTimeout(()=>{
-    wrap.style.opacity='0';
-    wrap.style.transform=startTransform;
-    setTimeout(()=>{
-      if(wrap.parentNode)wrap.parentNode.removeChild(wrap);
-      popActive=false;
-      scheduleNext();
-    },500);
-  },stayTime);
+  let wfi=0,wtick=0;
+  const wint=setInterval(()=>{if(++wtick%7===0){wfi=(wfi+1)%4;drawSnoopy(cnv.getContext('2d'),WALK_CYCLE[wfi],flip,SC);}},60);
+  wrap.addEventListener('click',()=>{bbl.textContent=QUOTES[Math.floor(Math.random()*QUOTES.length)];});
+  setTimeout(()=>{
+    clearInterval(wint);
+    wrap.style.opacity='0';wrap.style.transform=sT;
+    setTimeout(()=>{wrap.remove();popActive=false;scheduleSnoop();},500);
+  },4000+Math.random()*3000);
 }
+function scheduleSnoop(){setTimeout(spawnSnoopy,5000+Math.random()*7000);}
+setTimeout(spawnSnoopy,2800);
 
-function scheduleNext(){
-  // next pop in 4–10 seconds
-  const delay=4000+Math.random()*6000;
-  setTimeout(spawnSnoopy,delay);
+// ═══════════════════════════════════════════════════════════
+// NAME LETTERS — scramble reveal
+// ═══════════════════════════════════════════════════════════
+const GLYPHS='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#$%@';
+function scrambleReveal(el,finalChar,delay){
+  el.textContent=GLYPHS[Math.floor(Math.random()*GLYPHS.length)];
+  let ticks=0;
+  const iv=setInterval(()=>{
+    ticks++;
+    el.textContent=GLYPHS[Math.floor(Math.random()*GLYPHS.length)];
+    if(ticks>8){clearInterval(iv);el.textContent=finalChar;el.classList.add('revealed');}
+  },40);
 }
-// first pop in 3s
-setTimeout(spawnSnoopy,3000);
+function buildNameRow(id,word,cls){
+  const row=document.getElementById(id);
+  word.split('').forEach((ch,i)=>{
+    const s=document.createElement('span');
+    s.className=`nchar ${cls}`;
+    s.textContent=ch;
+    row.appendChild(s);
+    setTimeout(()=>scrambleReveal(s,ch),600+i*90);
+  });
+}
+buildNameRow('ntop','AIDAN','top');
+buildNameRow('nbot','HACK','bot');
 
-// ═══════════════════════════
-// NAME LETTERS
-// ═══════════════════════════
-'AIDAN'.split('').forEach(ch=>{
-  const s=document.createElement('span');
-  s.className='nchar';
-  s.textContent=ch;
-  document.getElementById('ntop').appendChild(s);
-});
-'HACK'.split('').forEach(ch=>{
-  const s=document.createElement('span');
-  s.className='nchar';
-  s.textContent=ch;
-  document.getElementById('nbot').appendChild(s);
-});
-
-// ═══════════════════════════
+// ═══════════════════════════════════════════════════════════
 // LOADER
-// ═══════════════════════════
-const bootMsgs=[
-  '> BIOS v2.4 OK','> LOADING KERNEL...','> JAMF DAEMON... OK',
-  '> AD SYNC... OK','> POWERSHELL... OK','> PHYSICS... OK','> BOOT COMPLETE'
-];
+// ═══════════════════════════════════════════════════════════
+const bootLines=['> BIOS v2.4 OK','> KERNEL LOADED','> JAMF DAEMON... OK','> AD SYNC... OK','> POWERSHELL... OK','> CANVAS LAYERS... OK','> SNOOPY... OK','> BOOT COMPLETE'];
 const ldTxt=['BOOT SEQUENCE INITIATED','LOADING ENDPOINT MODULES...','ESTABLISHING SECURE CONN...','COMPILING SCRIPTS...','RENDERING ASSETS...','BOOT COMPLETE'];
 let lp=0,lmi=0,lbi=0;
-const lfill=document.getElementById('ldfill');
-const lpct=document.getElementById('ldpct');
-const lmsg=document.getElementById('ldmsg');
-const llines=document.getElementById('ldlines');
-const ldInt=setInterval(()=>{
-  lp+=Math.floor(Math.random()*16)+8;
-  if(lp>100)lp=100;
-  lfill.style.width=lp+'%';
-  lpct.textContent=lp+'%';
-  lmsg.textContent=ldTxt[Math.min(lmi,ldTxt.length-1)];
-  lmi++;
-  if(lbi<bootMsgs.length){
-    const sp=document.createElement('div');
-    sp.textContent=bootMsgs[lbi++];
-    sp.style.color='rgba(245,166,35,0.45)';
-    llines.appendChild(sp);
-  }
-  if(lp>=100){
-    clearInterval(ldInt);
-    setTimeout(()=>{
-      document.getElementById('loader').classList.add('out');
-      setTimeout(()=>document.getElementById('loader').remove(),550);
-    },250);
-  }
-},110);
+const lfill=document.getElementById('ldfill'),lpct=document.getElementById('ldpct'),lmsg=document.getElementById('ldmsg'),llines=document.getElementById('ldlines');
+const ldIv=setInterval(()=>{
+  lp+=Math.floor(Math.random()*14)+7;if(lp>100)lp=100;
+  lfill.style.width=lp+'%';lpct.textContent=lp+'%';
+  lmsg.textContent=ldTxt[Math.min(lmi,ldTxt.length-1)];lmi++;
+  if(lbi<bootLines.length){const sp=document.createElement('div');sp.textContent=bootLines[lbi++];sp.style.color='rgba(245,166,35,.45)';llines.appendChild(sp);}
+  if(lp>=100){clearInterval(ldIv);setTimeout(()=>{document.getElementById('loader').classList.add('out');setTimeout(()=>document.getElementById('loader').remove(),550);},280);}
+},120);
 
-// ═══════════════════════════
-// MATTER.JS PHYSICS
-// ═══════════════════════════
-const{Engine,Render,Runner,Bodies,Composite,Mouse,MouseConstraint,Body,Events,Query}=Matter;
-const eng=Engine.create();eng.gravity.x=0;eng.gravity.y=0;
-const pc=document.getElementById('pbg');
-pc.width=window.innerWidth;pc.height=window.innerHeight;
-const rend=Render.create({canvas:pc,engine:eng,options:{width:window.innerWidth,height:window.innerHeight,background:'transparent',wireframes:false}});
-Render.run(rend);Runner.run(Runner.create(),eng);
+// ═══════════════════════════════════════════════════════════
+// CANVAS SETUP
+// ═══════════════════════════════════════════════════════════
+const clCanvas=document.getElementById('c-lights');
+const csCanvas=document.getElementById('c-shapes');
+const clCtx=clCanvas.getContext('2d');
+const csCtx=csCanvas.getContext('2d');
+function resizeCanvases(){
+  clCanvas.width=csCanvas.width=innerWidth;
+  clCanvas.height=csCanvas.height=innerHeight;
+}
+resizeCanvases();
+window.addEventListener('resize',resizeCanvases);
 
-const PALS=[
-  {base:'#0c0c22',lit:'#7c3aed',sh:'#06060e'},
-  {base:'#071a26',lit:'#06b6d4',sh:'#030c12'},
-  {base:'#1c1100',lit:'#f59e0b',sh:'#0a0600'},
-  {base:'#1c0510',lit:'#ec4899',sh:'#0c0308'},
-  {base:'#071a0c',lit:'#10b981',sh:'#030d06'},
-  {base:'#1a0900',lit:'#f97316',sh:'#0a0400'},
+// ═══════════════════════════════════════════════════════════
+// LAYER 1: LIGHT ORBS (immortal, click = toggle glow)
+// Pure 2D canvas. These never die. They float smoothly.
+// ═══════════════════════════════════════════════════════════
+const LIGHT_PALS=[
+  {off:'#0b0b20',on:'#7c3aed'},
+  {off:'#061820',on:'#06b6d4'},
+  {off:'#1a1000',on:'#f59e0b'},
+  {off:'#1a0510',on:'#ec4899'},
+  {off:'#051808',on:'#10b981'},
+  {off:'#180800',on:'#f97316'},
 ];
-const shapes=[];
-const NTOTAL=window.innerWidth<768?14:24;
-document.getElementById('stotal').textContent=NTOTAL;
+const N_LIGHTS=window.innerWidth<768?10:18;
+document.getElementById('stotal').textContent=N_LIGHTS;
 
-(function makeShapes(){
-  for(let i=0;i<NTOTAL;i++){
-    const x=Math.random()*window.innerWidth,y=Math.random()*window.innerHeight;
-    const p={...PALS[Math.floor(Math.random()*PALS.length)]};
-    const d={...p,on:false,g:0,type:''};
-    const roll=Math.random();
-    const o={restitution:.88,frictionAir:.005,friction:.001,_d:d};
-    let b;
-    if(roll<.28){d.type='circle';d.r=Math.random()*22+15;b=Bodies.circle(x,y,d.r,o);}
-    else if(roll<.55){d.type='sq';d.s=Math.random()*36+24;o.chamfer={radius:8};b=Bodies.rectangle(x,y,d.s,d.s,o);}
-    else if(roll<.78){d.type='pill';d.w=Math.random()*50+46;d.h=Math.random()*14+18;o.chamfer={radius:d.h/2};b=Bodies.rectangle(x,y,d.w,d.h,o);}
-    else{d.type='gem';d.r=Math.random()*22+17;b=Bodies.circle(x,y,d.r*.76,o);}
-    Body.setVelocity(b,{x:(Math.random()-.5)*3.2,y:(Math.random()-.5)*3.2});
-    Body.setAngularVelocity(b,(Math.random()-.5)*.025);
-    shapes.push(b);Composite.add(eng.world,b);
-  }
-})();
+const lights=Array.from({length:N_LIGHTS},()=>{
+  const pal=LIGHT_PALS[Math.floor(Math.random()*LIGHT_PALS.length)];
+  const angle=Math.random()*Math.PI*2;
+  const speed=0.4+Math.random()*0.55;
+  return {
+    x:Math.random()*innerWidth,
+    y:Math.random()*innerHeight,
+    r:14+Math.random()*18,
+    vx:Math.cos(angle)*speed,
+    vy:Math.sin(angle)*speed,
+    off:pal.off,on:pal.on,
+    lit:false,glow:0
+  };
+});
 
-let litN=0;
+let litCount=0;
 function updBright(){
-  const ratio=litN/NTOTAL;
-  const rb=Math.round(7+ratio*16),gb=Math.round(8+ratio*15),bb=Math.round(15+ratio*24);
-  document.body.style.background=`rgb(${rb},${gb},${bb})`;
-  const grid=document.getElementById('grid');
-  grid.style.opacity=(0.03+ratio*.07)+'';
-  if(ratio>.25)grid.classList.add('glow');else grid.classList.remove('glow');
+  const ratio=litCount/N_LIGHTS;
+  document.body.style.background=`rgb(${Math.round(7+ratio*20)},${Math.round(8+ratio*18)},${Math.round(15+ratio*28)})`;
+  document.getElementById('grid').style.opacity=(0.028+ratio*0.08)+'';
   const sd=document.getElementById('sdot');
-  if(litN>0)sd.classList.add('on');else sd.classList.remove('on');
-  document.getElementById('slit').textContent=litN;
-  if(litN>4)document.getElementById('hint').classList.add('gone');
+  if(litCount>0)sd.classList.add('on');else sd.classList.remove('on');
+  document.getElementById('slit').textContent=litCount;
 }
 
-function hb(h1,h2,t){
-  const p=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
-  const a=p(h1),b=p(h2);
-  return`rgb(${Math.round(a[0]+(b[0]-a[0])*t)},${Math.round(a[1]+(b[1]-a[1])*t)},${Math.round(a[2]+(b[2]-a[2])*t)})`;
-}
-function rr(ctx,x,y,w,h,r){
-  ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
-  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
-  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
-  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
-}
+function drawLights(){
+  clCtx.clearRect(0,0,clCanvas.width,clCanvas.height);
+  lights.forEach(l=>{
+    // smooth drift
+    l.x+=l.vx;l.y+=l.vy;
+    if(l.x<-80)l.x=clCanvas.width+80;
+    else if(l.x>clCanvas.width+80)l.x=-80;
+    if(l.y<-80)l.y=clCanvas.height+80;
+    else if(l.y>clCanvas.height+80)l.y=-80;
 
-Events.on(rend,'afterRender',()=>{
-  const ctx=rend.context,buf=110;
-  shapes.forEach(b=>{
-    const d=b._d;if(!d)return;
-    const{x,y}=b.position,ang=b.angle;
-    if(x<-buf)Body.setPosition(b,{x:window.innerWidth+buf,y});
-    else if(x>window.innerWidth+buf)Body.setPosition(b,{x:-buf,y});
-    if(y<-buf)Body.setPosition(b,{x,y:window.innerHeight+buf});
-    else if(y>window.innerHeight+buf)Body.setPosition(b,{x,y:-buf});
-    const sp=Math.sqrt(b.velocity.x**2+b.velocity.y**2);
-    if(sp<.35)Body.applyForce(b,b.position,{x:(Math.random()-.5)*.00022,y:(Math.random()-.5)*.00022});
-    if(d.on){if(d.g<1)d.g=Math.min(1,d.g+.09);}
-    else{if(d.g>0)d.g=Math.max(0,d.g-.045);}
-    const g=d.g;
-    ctx.save();ctx.translate(x,y);ctx.rotate(ang);
-    if(g>.02){ctx.shadowBlur=16+g*72;ctx.shadowColor=d.lit;}
-    else{ctx.shadowBlur=4;ctx.shadowOffsetY=2;ctx.shadowColor=d.sh+'88';}
-    ctx.fillStyle=g>0?hb(d.base,d.lit,g*.78):d.base;
-    if(d.type==='circle'){
-      ctx.beginPath();ctx.arc(0,0,d.r,0,Math.PI*2);ctx.fill();
-      if(g>.08){ctx.shadowBlur=0;ctx.fillStyle=`rgba(255,255,255,${.07+g*.26})`;ctx.beginPath();ctx.arc(-d.r*.28,-d.r*.28,d.r*.24,0,Math.PI*2);ctx.fill();}
-    }else if(d.type==='gem'){
-      const r=d.r;ctx.beginPath();ctx.moveTo(0,-r);ctx.lineTo(r*.6,-r*.18);ctx.lineTo(r*.6,r*.36);ctx.lineTo(0,r);ctx.lineTo(-r*.6,r*.36);ctx.lineTo(-r*.6,-r*.18);ctx.closePath();ctx.fill();
-      if(g>.08){ctx.shadowBlur=0;ctx.fillStyle=`rgba(255,255,255,${.09+g*.24})`;ctx.beginPath();ctx.moveTo(0,-r*.82);ctx.lineTo(r*.42,-r*.1);ctx.lineTo(0,-r*.32);ctx.closePath();ctx.fill();}
-    }else if(d.type==='sq'){
-      rr(ctx,-d.s/2,-d.s/2,d.s,d.s,8);ctx.fill();
-      if(g>.08){ctx.shadowBlur=0;ctx.fillStyle=`rgba(255,255,255,${.06+g*.21})`;rr(ctx,-d.s/2+3,-d.s/2+3,d.s*.38,d.s*.15,3);ctx.fill();}
-    }else if(d.type==='pill'){
-      rr(ctx,-d.w/2,-d.h/2,d.w,d.h,d.h/2);ctx.fill();
-      if(g>.08){ctx.shadowBlur=0;ctx.fillStyle=`rgba(255,255,255,${.06+g*.21})`;rr(ctx,-d.w/2+5,-d.h/2+3,d.w*.34,d.h*.26,d.h*.1);ctx.fill();}
+    // glow anim
+    if(l.lit){if(l.glow<1)l.glow=Math.min(1,l.glow+0.07);}
+    else{if(l.glow>0)l.glow=Math.max(0,l.glow-0.035);}
+
+    const g=l.glow;
+    clCtx.save();
+    // outer glow halo when lit
+    if(g>0.05){
+      const grad=clCtx.createRadialGradient(l.x,l.y,l.r*0.5,l.x,l.y,l.r*3.5);
+      grad.addColorStop(0,hexA(l.on,0.22*g));
+      grad.addColorStop(1,'transparent');
+      clCtx.fillStyle=grad;
+      clCtx.beginPath();clCtx.arc(l.x,l.y,l.r*3.5,0,Math.PI*2);clCtx.fill();
     }
-    ctx.shadowBlur=0;ctx.shadowOffsetY=0;ctx.restore();
+    // core orb
+    const core=clCtx.createRadialGradient(l.x-l.r*0.28,l.y-l.r*0.28,l.r*0.1,l.x,l.y,l.r);
+    if(g>0){
+      core.addColorStop(0,'#fff');
+      core.addColorStop(0.25,l.on);
+      core.addColorStop(1,l.off);
+    } else {
+      core.addColorStop(0,lighten(l.off,0.4));
+      core.addColorStop(1,l.off);
+    }
+    if(g>0.02){clCtx.shadowBlur=12+g*50;clCtx.shadowColor=l.on;}
+    else{clCtx.shadowBlur=4;clCtx.shadowColor='rgba(0,0,0,0.5)';}
+    clCtx.fillStyle=core;
+    clCtx.beginPath();clCtx.arc(l.x,l.y,l.r,0,Math.PI*2);clCtx.fill();
+    clCtx.restore();
   });
-});
+}
 
-const mouse=Mouse.create(rend.canvas);
-const mc=MouseConstraint.create(eng,{mouse,constraint:{stiffness:.18,render:{visible:false}}});
-Composite.add(eng.world,mc);rend.mouse=mouse;
+function hexA(hex,a){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return`rgba(${r},${g},${b},${a})`;}
+function lighten(hex,t){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return`rgb(${Math.round(r+(255-r)*t)},${Math.round(g+(255-g)*t)},${Math.round(b+(255-b)*t)})`;}
 
-Events.on(mc,'startdrag',e=>{if(e.body&&e.body._d&&!e.body._d.on){e.body._d.on=true;litN++;updBright();}});
-Events.on(mc,'enddrag',e=>{if(e.body&&e.body._d&&e.body._d.on){e.body._d.on=false;litN=Math.max(0,litN-1);updBright();}});
+// ═══════════════════════════════════════════════════════════
+// LAYER 2: DESTROYABLE SHAPES
+// Click = particle explosion, shape gone.
+// After DESTROY_GOAL shapes destroyed → Galaga!
+// ═══════════════════════════════════════════════════════════
+const N_SHAPES=window.innerWidth<768?12:22;
+const DESTROY_GOAL=20; // destroy this many to trigger Galaga
+const SHAPE_COLS=['#7c3aed','#06b6d4','#ec4899','#10b981','#f97316','#f59e0b'];
 
-let mds=null;
-rend.canvas.addEventListener('mousedown',e=>{mds={x:e.clientX,y:e.clientY,t:Date.now()};});
-rend.canvas.addEventListener('mouseup',e=>{
-  if(!mds)return;
-  const dx=e.clientX-mds.x,dy=e.clientY-mds.y,dt=Date.now()-mds.t;
-  if(Math.sqrt(dx*dx+dy*dy)<6&&dt<280){
-    const hit=Query.point(shapes,{x:e.clientX,y:e.clientY});
-    if(hit.length>0){const d=hit[0]._d;d.on=!d.on;litN+=d.on?1:-1;litN=Math.max(0,litN);updBright();}
+let destroyCount=0;
+let galaga_triggered=false;
+
+const shapeObjs=[];
+const particles=[];
+
+function mkShape(){
+  const col=SHAPE_COLS[Math.floor(Math.random()*SHAPE_COLS.length)];
+  const t=Math.random();
+  const angle=Math.random()*Math.PI*2;
+  const spd=0.35+Math.random()*0.5;
+  const base={
+    x:Math.random()*innerWidth,y:Math.random()*innerHeight,
+    vx:Math.cos(angle)*spd,vy:Math.sin(angle)*spd,
+    rot:Math.random()*Math.PI*2,rotV:(Math.random()-.5)*.012,
+    col,alpha:1,alive:true
+  };
+  if(t<0.3){return {...base,type:'sq',s:22+Math.random()*28};}
+  else if(t<0.58){return {...base,type:'pill',w:44+Math.random()*36,h:16+Math.random()*12};}
+  else if(t<0.78){return {...base,type:'tri',s:20+Math.random()*26};}
+  else{return {...base,type:'gem',r:18+Math.random()*20};}
+}
+for(let i=0;i<N_SHAPES;i++)shapeObjs.push(mkShape());
+
+function drawShape(ctx,s){
+  if(!s.alive&&s.alpha<=0)return;
+  ctx.save();
+  ctx.translate(s.x,s.y);ctx.rotate(s.rot);
+  ctx.globalAlpha=s.alpha;
+  ctx.fillStyle=s.col;
+  ctx.shadowBlur=0;
+  if(s.type==='sq'){
+    const h=s.s/2;
+    ctx.beginPath();ctx.roundRect(-h,-h,s.s,s.s,6);ctx.fill();
+    // inner highlight
+    ctx.fillStyle='rgba(255,255,255,0.1)';
+    ctx.beginPath();ctx.roundRect(-h+3,-h+3,s.s*.45,s.s*.2,3);ctx.fill();
+  } else if(s.type==='pill'){
+    const hw=s.w/2,hh=s.h/2,r=hh;
+    ctx.beginPath();ctx.moveTo(-hw+r,-hh);ctx.lineTo(hw-r,-hh);ctx.quadraticCurveTo(hw,-hh,hw,0);ctx.quadraticCurveTo(hw,hh,hw-r,hh);ctx.lineTo(-hw+r,hh);ctx.quadraticCurveTo(-hw,hh,-hw,0);ctx.quadraticCurveTo(-hw,-hh,-hw+r,-hh);ctx.closePath();ctx.fill();
+  } else if(s.type==='tri'){
+    const h=s.s;
+    ctx.beginPath();ctx.moveTo(0,-h*.6);ctx.lineTo(h*.5,h*.4);ctx.lineTo(-h*.5,h*.4);ctx.closePath();ctx.fill();
+  } else if(s.type==='gem'){
+    const r=s.r;
+    ctx.beginPath();ctx.moveTo(0,-r);ctx.lineTo(r*.6,-r*.15);ctx.lineTo(r*.6,r*.4);ctx.lineTo(0,r);ctx.lineTo(-r*.6,r*.4);ctx.lineTo(-r*.6,-r*.15);ctx.closePath();ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,0.12)';
+    ctx.beginPath();ctx.moveTo(0,-r*.8);ctx.lineTo(r*.4,-r*.1);ctx.lineTo(0,-r*.3);ctx.closePath();ctx.fill();
   }
-  mds=null;
-});
-window.addEventListener('resize',()=>{
-  pc.width=window.innerWidth;pc.height=window.innerHeight;
-  rend.canvas.width=window.innerWidth;rend.canvas.height=window.innerHeight;
+  ctx.restore();
+}
+
+function explode(s){
+  // burst of particles in the shape's color
+  const N=18+Math.floor(Math.random()*14);
+  for(let i=0;i<N;i++){
+    const ang=Math.random()*Math.PI*2;
+    const spd=1.5+Math.random()*4;
+    particles.push({
+      x:s.x,y:s.y,
+      vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd-1.5,
+      col:s.col,
+      r:2+Math.random()*4,
+      life:1,decay:.028+Math.random()*.02
+    });
+  }
+  // also a shockwave ring
+  particles.push({x:s.x,y:s.y,ring:true,col:s.col,rr:4,life:1,decay:.04});
+}
+
+function drawParticles(ctx){
+  particles.forEach((p,i)=>{
+    if(p.life<=0)return;
+    ctx.save();ctx.globalAlpha=p.life;
+    if(p.ring){
+      ctx.strokeStyle=p.col;
+      ctx.lineWidth=2;
+      ctx.shadowBlur=8;ctx.shadowColor=p.col;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.rr,0,Math.PI*2);ctx.stroke();
+      p.rr+=4;
+    } else {
+      ctx.fillStyle=p.col;
+      ctx.shadowBlur=6;ctx.shadowColor=p.col;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();
+      p.x+=p.vx;p.y+=p.vy;p.vy+=0.12;
+    }
+    p.life-=p.decay;
+    ctx.restore();
+  });
+}
+
+function drawShapes(){
+  csCtx.clearRect(0,0,csCanvas.width,csCanvas.height);
+  shapeObjs.forEach(s=>{
+    if(!s.alive){s.alpha=Math.max(0,s.alpha-.08);return;}
+    // drift
+    s.x+=s.vx;s.y+=s.vy;
+    s.rot+=s.rotV;
+    const buf=80;
+    if(s.x<-buf)s.x=csCanvas.width+buf;
+    else if(s.x>csCanvas.width+buf)s.x=-buf;
+    if(s.y<-buf)s.y=csCanvas.height+buf;
+    else if(s.y>csCanvas.height+buf)s.y=-buf;
+    drawShape(csCtx,s);
+  });
+  // particles on shapes canvas
+  drawParticles(csCtx);
+  // clean dead particles
+  for(let i=particles.length-1;i>=0;i--)if(particles[i].life<=0)particles.splice(i,1);
+}
+
+// ═══════════════════════════════════════════════════════════
+// HIT TESTING (for both layers, on shapes canvas)
+// ═══════════════════════════════════════════════════════════
+function ptInShape(s,px,py){
+  // rotate px,py into shape's local space
+  const dx=px-s.x,dy=py-s.y;
+  const cos=Math.cos(-s.rot),sin=Math.sin(-s.rot);
+  const lx=dx*cos-dy*sin,ly=dx*sin+dy*cos;
+  if(s.type==='sq'){const h=s.s/2;return Math.abs(lx)<h&&Math.abs(ly)<h;}
+  if(s.type==='pill'){return Math.abs(lx)<s.w/2&&Math.abs(ly)<s.h/2;}
+  if(s.type==='gem'||s.type==='circle'){return Math.sqrt(lx*lx+ly*ly)<s.r;}
+  if(s.type==='tri'){const h=s.s*.6;return ly>-h&&ly<s.s*.4&&Math.abs(lx)<(1-(ly+h)/(s.s))*s.s*.5;}
+  return false;
+}
+function ptInLight(l,px,py){return Math.sqrt((px-l.x)**2+(py-l.y)**2)<l.r*1.4;}
+
+// ═══════════════════════════════════════════════════════════
+// INPUT: click on shapes canvas handles both layers
+// ═══════════════════════════════════════════════════════════
+csCanvas.addEventListener('click',e=>{
+  const cx=e.clientX,cy=e.clientY;
+
+  // Check lights first (they're on the back layer but we hit test them from the front canvas)
+  for(let i=lights.length-1;i>=0;i--){
+    if(ptInLight(lights[i],cx,cy)){
+      lights[i].lit=!lights[i].lit;
+      litCount+=lights[i].lit?1:-1;
+      litCount=Math.max(0,litCount);
+      updBright();
+      return; // light click, don't also destroy a shape
+    }
+  }
+
+  // Check shapes
+  for(let i=shapeObjs.length-1;i>=0;i--){
+    const s=shapeObjs[i];
+    if(!s.alive)continue;
+    if(ptInShape(s,cx,cy)){
+      s.alive=false;
+      explode(s);
+      destroyCount++;
+      // Respawn a new shape after 4s to keep the field populated
+      setTimeout(()=>shapeObjs.push(mkShape()),4000);
+      // Check for Galaga trigger
+      if(destroyCount>=DESTROY_GOAL&&!galaga_triggered){
+        galaga_triggered=true;
+        setTimeout(triggerGalaga,1200);
+      }
+      return;
+    }
+  }
 });
 
-// ═══════════════════════════
+// ═══════════════════════════════════════════════════════════
+// MAIN ANIMATION LOOP
+// ═══════════════════════════════════════════════════════════
+function loop(){
+  drawLights();
+  drawShapes();
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+// ═══════════════════════════════════════════════════════════
+// GALAGA EASTER EGG
+// ═══════════════════════════════════════════════════════════
+function triggerGalaga(){
+  doWipe(()=>{
+    document.getElementById('galaga-screen').classList.add('open');
+    startGalaga();
+  });
+}
+
+function startGalaga(){
+  const gc=document.getElementById('galaga-canvas');
+  const GW=Math.min(480,innerWidth*.9);
+  const GH=Math.min(640,innerHeight*.85);
+  gc.width=GW;gc.height=GH;
+  const gx=gc.getContext('2d');
+
+  let score=0,lives=3,gameOver=false,gameWon=false;
+
+  // Stars
+  const stars=Array.from({length:80},()=>({
+    x:Math.random()*GW,y:Math.random()*GH,
+    s:.5+Math.random()*1.5,spd:.5+Math.random()*1.5
+  }));
+
+  // Player ship
+  const ship={x:GW/2,y:GH-50,w:28,h:24,speed:4,alive:true,invincible:0};
+  const keys={};
+  const bullets=[];
+  let shootCooldown=0;
+
+  // Enemy grid: 4 rows × 8 cols
+  const enemies=[];
+  const ECOLS=8,EROWS=4;
+  const EW=36,EH=28,EPAD=8;
+  const startX=(GW-(ECOLS*(EW+EPAD)-EPAD))/2;
+  let enemyDir=1,enemySpeedX=0.5,enemyDrop=false,enemyDropAmt=0;
+  let enemyBullets=[];
+  let shootTimer=0;
+
+  for(let r=0;r<EROWS;r++){
+    for(let c=0;c<ECOLS;c++){
+      enemies.push({
+        x:startX+c*(EW+EPAD)+EW/2,
+        y:60+r*(EH+8)+EH/2,
+        alive:true,row:r,col:c,t:0,
+        type:r<1?'boss':r<2?'mid':'grunt'
+      });
+    }
+  }
+
+  // Draw pixel ship (player)
+  function drawShip(x,y){
+    // Simple pixel ship: triangle with engine glow
+    gx.fillStyle='#00e5ff';
+    gx.beginPath();gx.moveTo(x,y-12);gx.lineTo(x+14,y+12);gx.lineTo(x-14,y+12);gx.closePath();gx.fill();
+    gx.fillStyle='rgba(0,229,255,0.3)';
+    gx.beginPath();gx.moveTo(x,y-4);gx.lineTo(x+8,y+12);gx.lineTo(x-8,y+12);gx.closePath();gx.fill();
+    // engine
+    gx.fillStyle='#f5a623';
+    gx.fillRect(x-4,y+10,8,4);
+    gx.shadowBlur=10;gx.shadowColor='#f5a623';
+    gx.fillRect(x-3,y+12,6,3);
+    gx.shadowBlur=0;
+  }
+
+  // Draw enemy
+  function drawEnemy(e){
+    e.t++;
+    const bop=Math.sin(e.t*.08)*3;
+    gx.save();gx.translate(e.x,e.y+bop);
+    if(e.type==='boss'){
+      // Boss bug: big and menacing
+      gx.fillStyle='#ec4899';
+      gx.shadowBlur=8;gx.shadowColor='#ec4899';
+      gx.beginPath();gx.moveTo(0,-14);gx.lineTo(14,-6);gx.lineTo(18,8);gx.lineTo(8,14);gx.lineTo(-8,14);gx.lineTo(-18,8);gx.lineTo(-14,-6);gx.closePath();gx.fill();
+      gx.fillStyle='rgba(255,255,255,.3)';
+      gx.beginPath();gx.arc(-5,-4,3,0,Math.PI*2);gx.fill();
+      gx.beginPath();gx.arc(5,-4,3,0,Math.PI*2);gx.fill();
+    } else if(e.type==='mid'){
+      gx.fillStyle='#7c3aed';
+      gx.shadowBlur=6;gx.shadowColor='#7c3aed';
+      gx.beginPath();gx.moveTo(0,-11);gx.lineTo(11,-5);gx.lineTo(13,7);gx.lineTo(0,11);gx.lineTo(-13,7);gx.lineTo(-11,-5);gx.closePath();gx.fill();
+      gx.fillStyle='rgba(255,255,255,.25)';
+      gx.fillRect(-4,-3,3,3);gx.fillRect(1,-3,3,3);
+    } else {
+      gx.fillStyle='#10b981';
+      gx.shadowBlur=5;gx.shadowColor='#10b981';
+      gx.beginPath();gx.moveTo(0,-9);gx.lineTo(9,-4);gx.lineTo(9,7);gx.lineTo(-9,7);gx.lineTo(-9,-4);gx.closePath();gx.fill();
+      gx.fillStyle='rgba(255,255,255,.2)';
+      gx.fillRect(-3,-2,2,2);gx.fillRect(1,-2,2,2);
+    }
+    gx.restore();
+    gx.shadowBlur=0;
+  }
+
+  // Enemy explosions
+  const eExplosions=[];
+  function enemyExplode(e){
+    for(let i=0;i<12;i++){
+      const ang=Math.random()*Math.PI*2;
+      const spd=1+Math.random()*3;
+      eExplosions.push({x:e.x,y:e.y,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,life:1,col:e.type==='boss'?'#ec4899':e.type==='mid'?'#7c3aed':'#10b981'});
+    }
+  }
+
+  function updateGame(){
+    if(gameOver||gameWon)return;
+
+    // move stars
+    stars.forEach(s=>{s.y+=s.spd;if(s.y>GH)s.y=0;});
+
+    // player movement
+    if((keys['ArrowLeft']||keys['a']||keys['A'])&&ship.x>20)ship.x-=ship.speed;
+    if((keys['ArrowRight']||keys['d']||keys['D'])&&ship.x<GW-20)ship.x+=ship.speed;
+    if((keys['ArrowUp']||keys['w']||keys['W'])&&ship.y>GH/2)ship.y-=ship.speed;
+    if((keys['ArrowDown']||keys['s']||keys['S'])&&ship.y<GH-20)ship.y+=ship.speed;
+
+    // shoot
+    shootCooldown--;
+    if((keys[' ']||keys['z']||keys['Z'])&&shootCooldown<=0){
+      bullets.push({x:ship.x,y:ship.y-14,vy:-10});
+      shootCooldown=12;
+    }
+
+    // move bullets
+    for(let i=bullets.length-1;i>=0;i--){
+      bullets[i].y+=bullets[i].vy;
+      if(bullets[i].y<0)bullets.splice(i,1);
+    }
+
+    // move enemies
+    const alive=enemies.filter(e=>e.alive);
+    if(alive.length===0){gameWon=true;return;}
+    let hitWall=false;
+    alive.forEach(e=>{e.x+=enemyDir*enemySpeedX;});
+    alive.forEach(e=>{if(e.x>GW-20||e.x<20)hitWall=true;});
+    if(hitWall){
+      enemyDir*=-1;
+      alive.forEach(e=>{e.y+=20;});
+      enemySpeedX=Math.min(2,enemySpeedX+0.08);
+    }
+
+    // enemy shoots
+    shootTimer--;
+    if(shootTimer<=0&&alive.length>0){
+      shootTimer=50+Math.floor(Math.random()*60);
+      const shooter=alive[Math.floor(Math.random()*alive.length)];
+      enemyBullets.push({x:shooter.x,y:shooter.y+12,vy:3+Math.random()*2});
+    }
+
+    // enemy bullets move + collide with player
+    for(let i=enemyBullets.length-1;i>=0;i--){
+      enemyBullets[i].y+=enemyBullets[i].vy;
+      if(enemyBullets[i].y>GH){enemyBullets.splice(i,1);continue;}
+      if(ship.invincible<=0&&Math.abs(enemyBullets[i].x-ship.x)<16&&Math.abs(enemyBullets[i].y-ship.y)<16){
+        enemyBullets.splice(i,1);
+        lives--;ship.invincible=80;
+        document.getElementById('g-lives').textContent=lives;
+        if(lives<=0)gameOver=true;
+      }
+    }
+    if(ship.invincible>0)ship.invincible--;
+
+    // bullet vs enemy collision
+    for(let bi=bullets.length-1;bi>=0;bi--){
+      for(let ei=enemies.length-1;ei>=0;ei--){
+        const e=enemies[ei];
+        if(!e.alive)continue;
+        if(Math.abs(bullets[bi].x-e.x)<16&&Math.abs(bullets[bi].y-e.y)<14){
+          e.alive=false;enemyExplode(e);
+          bullets.splice(bi,1);
+          score+=e.type==='boss'?300:e.type==='mid'?150:80;
+          document.getElementById('g-score').textContent=score;
+          break;
+        }
+      }
+    }
+
+    // enemy reached bottom
+    if(alive.some(e=>e.y>GH-60))gameOver=true;
+
+    // eExplosion particles
+    for(let i=eExplosions.length-1;i>=0;i--){
+      const p=eExplosions[i];
+      p.x+=p.vx;p.y+=p.vy;p.life-=0.05;
+      if(p.life<=0)eExplosions.splice(i,1);
+    }
+  }
+
+  function renderGame(){
+    gx.fillStyle='#000';gx.fillRect(0,0,GW,GH);
+
+    // stars
+    stars.forEach(s=>{gx.fillStyle=`rgba(255,255,255,${s.s/2})`;gx.fillRect(s.x,s.y,s.s,s.s);});
+
+    // enemies
+    enemies.forEach(e=>{if(e.alive)drawEnemy(e);});
+
+    // explosion particles
+    eExplosions.forEach(p=>{
+      gx.save();gx.globalAlpha=p.life;gx.fillStyle=p.col;
+      gx.shadowBlur=6;gx.shadowColor=p.col;
+      gx.beginPath();gx.arc(p.x,p.y,3,0,Math.PI*2);gx.fill();
+      gx.restore();
+    });
+
+    // player bullets
+    bullets.forEach(b=>{
+      gx.fillStyle='#fff';gx.shadowBlur=8;gx.shadowColor='#00e5ff';
+      gx.fillRect(b.x-2,b.y,4,12);gx.shadowBlur=0;
+    });
+
+    // enemy bullets
+    enemyBullets.forEach(b=>{
+      gx.fillStyle='#ff2d6e';gx.shadowBlur=6;gx.shadowColor='#ff2d6e';
+      gx.fillRect(b.x-2,b.y,4,10);gx.shadowBlur=0;
+    });
+
+    // player ship
+    if(ship.alive&&(ship.invincible===0||Math.floor(ship.invincible/6)%2===0))drawShip(ship.x,ship.y);
+
+    // overlay messages
+    if(gameOver){
+      gx.fillStyle='rgba(0,0,0,.6)';gx.fillRect(0,0,GW,GH);
+      gx.fillStyle='#ff2d6e';gx.font="bold 14px 'Press Start 2P'";gx.textAlign='center';
+      gx.fillText('GAME OVER',GW/2,GH/2-20);
+      gx.fillStyle='#fff';gx.font="8px 'Press Start 2P'";
+      gx.fillText('SCORE: '+score,GW/2,GH/2+10);
+      gx.fillText('ESC TO EXIT',GW/2,GH/2+36);
+    }
+    if(gameWon){
+      gx.fillStyle='rgba(0,0,0,.6)';gx.fillRect(0,0,GW,GH);
+      gx.fillStyle='#f5a623';gx.font="bold 12px 'Press Start 2P'";gx.textAlign='center';
+      gx.fillText('YOU WIN!',GW/2,GH/2-20);
+      gx.fillStyle='#fff';gx.font="8px 'Press Start 2P'";
+      gx.fillText('SCORE: '+score,GW/2,GH/2+10);
+      gx.fillText('ESC TO EXIT',GW/2,GH/2+36);
+    }
+  }
+
+  let gRunning=true;
+  function gLoop(){if(!gRunning)return;updateGame();renderGame();requestAnimationFrame(gLoop);}
+  gLoop();
+
+  const keyDown=e=>{keys[e.key]=true;if(e.key==='Escape'){exitGalaga();gRunning=false;}e.preventDefault();};
+  const keyUp=e=>{keys[e.key]=false;};
+  window.addEventListener('keydown',keyDown);
+  window.addEventListener('keyup',keyUp);
+  gc._cleanup=()=>{window.removeEventListener('keydown',keyDown);window.removeEventListener('keyup',keyUp);gRunning=false;};
+}
+
+function exitGalaga(){
+  const gc=document.getElementById('galaga-canvas');
+  if(gc._cleanup)gc._cleanup();
+  doWipe(()=>{
+    document.getElementById('galaga-screen').classList.remove('open');
+    galaga_triggered=false;destroyCount=0;
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
 // WIPE TRANSITIONS
-// ═══════════════════════════
+// ═══════════════════════════════════════════════════════════
 const wbars=document.querySelectorAll('.wbar');
-const wcolors=['#f5a623','#07080f','#f5a623','#07080f','#f5a623','#07080f'];
-wbars.forEach((b,i)=>b.style.background=wcolors[i]);
+['#f5a623','#07080f','#f5a623','#07080f','#f5a623','#07080f'].forEach((c,i)=>wbars[i].style.background=c);
 function doWipe(cb){
   wbars.forEach((b,i)=>{b.style.transition=`width .2s ${i*.036}s cubic-bezier(.77,0,.175,1)`;b.style.width='100%';});
   setTimeout(()=>{cb();wbars.forEach((b,i)=>{b.style.transition=`width .2s ${(wbars.length-i-1)*.036}s cubic-bezier(.77,0,.175,1)`;b.style.width='0%';});},360);
 }
 
-// ═══════════════════════════
+// ═══════════════════════════════════════════════════════════
 // ROUTING
-// ═══════════════════════════
+// ═══════════════════════════════════════════════════════════
 const PMAP={home:'page-home',exp:'page-exp',proj:'page-proj',con:'page-con'};
 let cur='home';
 function goTo(id){
   if(id===cur)return;
   document.getElementById('nmenu').classList.remove('open');
-  doWipe(()=>{
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    document.getElementById(PMAP[id]).classList.add('active');
-    window.scrollTo(0,0);cur=id;
-  });
+  doWipe(()=>{document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(PMAP[id]).classList.add('active');window.scrollTo(0,0);cur=id;});
 }
 document.getElementById('nbtn').addEventListener('click',e=>{e.stopPropagation();document.getElementById('nmenu').classList.toggle('open');});
 document.addEventListener('click',()=>document.getElementById('nmenu').classList.remove('open'));
 
-// ═══════════════════════════
+// ═══════════════════════════════════════════════════════════
 // MODAL
-// ═══════════════════════════
+// ═══════════════════════════════════════════════════════════
 function openModal(title,tag,desc,techs){
   document.getElementById('mbt').textContent='PROJECT // '+tag.toUpperCase();
   document.getElementById('mtag').textContent=tag.toUpperCase();
@@ -1004,10 +1251,10 @@ function openModal(title,tag,desc,techs){
 }
 function closeModal(){document.getElementById('modal').classList.remove('open');}
 document.getElementById('modal').addEventListener('click',e=>{if(e.target===document.getElementById('modal'))closeModal();});
-let md=false,mox=0,moy=0;
-document.getElementById('mbar').addEventListener('mousedown',e=>{md=true;const r=document.getElementById('mwin').getBoundingClientRect();mox=e.clientX-r.left-r.width/2;moy=e.clientY-r.top-r.height/2;});
-window.addEventListener('mousemove',e=>{if(!md)return;const mw=document.getElementById('mwin');mw.style.position='fixed';mw.style.left=(e.clientX-mox)+'px';mw.style.top=(e.clientY-moy)+'px';mw.style.transform='none';mw.style.margin='0';});
-window.addEventListener('mouseup',()=>md=false);
+let mDrag=false,mox=0,moy=0;
+document.getElementById('mbar').addEventListener('mousedown',e=>{mDrag=true;const r=document.getElementById('mwin').getBoundingClientRect();mox=e.clientX-r.left-r.width/2;moy=e.clientY-r.top-r.height/2;});
+window.addEventListener('mousemove',e=>{if(!mDrag)return;const mw=document.getElementById('mwin');mw.style.position='fixed';mw.style.left=(e.clientX-mox)+'px';mw.style.top=(e.clientY-moy)+'px';mw.style.transform='none';mw.style.margin='0';});
+window.addEventListener('mouseup',()=>mDrag=false);
 </script>
 </body>
 </html>
